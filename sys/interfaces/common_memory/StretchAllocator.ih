@@ -1,0 +1,117 @@
+#ifndef _StretchAllocator_h_
+#define _StretchAllocator_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:58:23 2010
+ */
+
+typedef struct _StretchAllocator_cl StretchAllocator_cl;
+typedef StretchAllocator_cl *StretchAllocator_clp;
+typedef const struct _StretchAllocator_op StretchAllocator_op;
+
+struct _StretchAllocator_cl {
+	StretchAllocator_op	*op;
+#ifndef __StretchAllocator_STATE
+	addr_t	 st;
+#else 
+	__StretchAllocator_STATE	 *st;
+#endif 
+};
+
+#include "Mem.ih"
+#include "Stretch.ih"
+
+#define StretchAllocator_clp__code (0x6418461750b90000ull)
+#define StretchAllocator_clp__wordconv (pointerval_t)
+
+#define StretchAllocator_SizeSeq__code (1 + StretchAllocator_clp__code )
+#define StretchAllocator_SizeSeq__wordconv (pointerval_t)
+#define StretchAllocator_StretchSeq__code (2 + StretchAllocator_clp__code )
+#define StretchAllocator_StretchSeq__wordconv (pointerval_t)
+
+
+typedef struct StretchAllocator_SizeSeq StretchAllocator_SizeSeq;
+struct StretchAllocator_SizeSeq {
+	uint32_t	len;
+	uint32_t	blen;
+	Stretch_Size	*data;
+	Stretch_Size	*base;
+};
+
+typedef struct StretchAllocator_StretchSeq StretchAllocator_StretchSeq;
+struct StretchAllocator_StretchSeq {
+	uint32_t	len;
+	uint32_t	blen;
+	Stretch_clp	*data;
+	Stretch_clp	*base;
+};
+
+
+typedef Stretch_clp StretchAllocator_New_fn (
+	StretchAllocator_cl	*self,
+	Stretch_Size	size	/* IN */,
+	Stretch_Rights	gaxs	/* IN */ );
+
+typedef StretchAllocator_StretchSeq *StretchAllocator_NewList_fn (
+	StretchAllocator_cl	*self,
+	const StretchAllocator_SizeSeq	*sizes	/* IN */,
+	Stretch_Rights	gaxs	/* IN */ );
+
+typedef Stretch_clp StretchAllocator_NewAt_fn (
+	StretchAllocator_cl	*self,
+	Stretch_Size	size	/* IN */,
+	Stretch_Rights	gaxs	/* IN */,
+	addr_t	start	/* IN */,
+	Mem_Attrs	attr	/* IN */,
+	Mem_PMem	pmem	/* IN */ );
+
+typedef Stretch_clp StretchAllocator_Clone_fn (
+	StretchAllocator_cl	*self,
+	Stretch_clp	template	/* IN */,
+	Stretch_Size	size	/* IN */ );
+
+typedef void StretchAllocator_DestroyStretch_fn (
+	StretchAllocator_cl	*self,
+	Stretch_clp	stretch	/* IN */ );
+
+typedef void StretchAllocator_Destroy_fn (
+	StretchAllocator_cl	*self );
+
+#ifndef __NO_METHOD_MACROS__
+#define StretchAllocator$New(_self,_size,_gaxs) (((_self)->op->New)((_self),(_size),(_gaxs))) 
+#define StretchAllocator$NewList(_self,_sizes,_gaxs) (((_self)->op->NewList)((_self),(_sizes),(_gaxs))) 
+#define StretchAllocator$NewAt(_self,_size,_gaxs,_start,_attr,_pmem) (((_self)->op->NewAt)((_self),(_size),(_gaxs),(_start),(_attr),(_pmem))) 
+#define StretchAllocator$Clone(_self,_template,_size) (((_self)->op->Clone)((_self),(_template),(_size))) 
+#define StretchAllocator$DestroyStretch(_self,_stretch) (((_self)->op->DestroyStretch)((_self),(_stretch))) 
+#define StretchAllocator$Destroy(_self) (((_self)->op->Destroy)((_self))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#define StretchAllocator$Failure "StretchAllocator$Failure"
+#define RAISE_StretchAllocator$Failure() \
+  { \
+    RAISE (StretchAllocator$Failure, NULL); \
+  }
+
+#define CATCH_StretchAllocator$Failure() \
+  CATCHTOP (StretchAllocator$Failure) \
+  CATCHBOT
+
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _StretchAllocator_op {
+	StretchAllocator_New_fn	*New;
+	StretchAllocator_NewList_fn	*NewList;
+	StretchAllocator_NewAt_fn	*NewAt;
+	StretchAllocator_Clone_fn	*Clone;
+	StretchAllocator_DestroyStretch_fn	*DestroyStretch;
+	StretchAllocator_Destroy_fn	*Destroy;
+};
+
+
+
+#endif /* _StretchAllocator_h_ */

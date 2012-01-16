@@ -1,0 +1,111 @@
+#ifndef _Stretch_h_
+#define _Stretch_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:58:30 2010
+ */
+
+typedef struct _Stretch_cl Stretch_cl;
+typedef Stretch_cl *Stretch_clp;
+typedef const struct _Stretch_op Stretch_op;
+
+struct _Stretch_cl {
+	Stretch_op	*op;
+#ifndef __Stretch_STATE
+	addr_t	 st;
+#else 
+	__Stretch_STATE	 *st;
+#endif 
+};
+
+#include "ProtectionDomain.ih"
+
+#define Stretch_clp__code (0x3eb79d1c488c0000ull)
+#define Stretch_clp__wordconv (pointerval_t)
+
+#define Stretch_Size__code (1 + Stretch_clp__code )
+#define Stretch_Size__wordconv 
+#define Stretch_Right__code (2 + Stretch_clp__code )
+#define Stretch_Right__wordconv 
+#define Stretch_Rights__code (3 + Stretch_clp__code )
+#define Stretch_Rights__wordconv (pointerval_t)
+
+
+typedef word_t Stretch_Size;
+
+typedef enum Stretch_Right {
+	Stretch_Right_Read,
+	Stretch_Right_Write,
+	Stretch_Right_Execute,
+	Stretch_Right_Meta,
+	Stretch_Right_Global
+} Stretch_Right;
+
+typedef set_t Stretch_Rights;
+
+
+typedef addr_t Stretch_Range_fn (
+	Stretch_cl	*self
+   /* RETURNS */,
+	Stretch_Size	*s );
+
+typedef addr_t Stretch_Info_fn (
+	Stretch_cl	*self
+   /* RETURNS */,
+	Stretch_Size	*s );
+
+typedef void Stretch_SetProt_fn (
+	Stretch_cl	*self,
+	ProtectionDomain_ID	pdid	/* IN */,
+	Stretch_Rights	access	/* IN */ );
+
+typedef void Stretch_RemProt_fn (
+	Stretch_cl	*self,
+	ProtectionDomain_ID	pdid	/* IN */ );
+
+typedef void Stretch_SetGlobal_fn (
+	Stretch_cl	*self,
+	Stretch_Rights	access	/* IN */ );
+
+typedef Stretch_Rights Stretch_Query_fn (
+	Stretch_cl	*self,
+	ProtectionDomain_ID	pdid	/* IN */ );
+
+#ifndef __NO_METHOD_MACROS__
+#define Stretch$Range(_self,_s) (((_self)->op->Range)((_self),(_s))) 
+#define Stretch$Info(_self,_s) (((_self)->op->Info)((_self),(_s))) 
+#define Stretch$SetProt(_self,_pdid,_access) (((_self)->op->SetProt)((_self),(_pdid),(_access))) 
+#define Stretch$RemProt(_self,_pdid) (((_self)->op->RemProt)((_self),(_pdid))) 
+#define Stretch$SetGlobal(_self,_access) (((_self)->op->SetGlobal)((_self),(_access))) 
+#define Stretch$Query(_self,_pdid) (((_self)->op->Query)((_self),(_pdid))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#define Stretch$Denied "Stretch$Denied"
+#define RAISE_Stretch$Denied() \
+  { \
+    RAISE (Stretch$Denied, NULL); \
+  }
+
+#define CATCH_Stretch$Denied() \
+  CATCHTOP (Stretch$Denied) \
+  CATCHBOT
+
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _Stretch_op {
+	Stretch_Range_fn	*Range;
+	Stretch_Info_fn	*Info;
+	Stretch_SetProt_fn	*SetProt;
+	Stretch_RemProt_fn	*RemProt;
+	Stretch_SetGlobal_fn	*SetGlobal;
+	Stretch_Query_fn	*Query;
+};
+
+
+
+#endif /* _Stretch_h_ */

@@ -1,0 +1,358 @@
+ * After "#include <ntsc_tgt.h>", the following calls must be defined
+    ASSERT((bt->state == Blocked), ntsc_dbgstop(); );
+    ASSERT((current->thread == Pvs(thd)->st), ntsc_dbgstop(); );
+	ASSERT((current->thread == Pvs(thd)->st), ntsc_dbgstop(); );
+    ASSERT((CURRENT_THREAD(st)->thread == th), ntsc_dbgstop(); );
+    ASSERT(((CURRENT_THREAD(st))->thread != t), ntsc_dbgstop(); );
+    ASSERT(cur->thread == current, ntsc_dbgstop(); );
+    ASSERT(False, ntsc_dbgstop(); );
+	ASSERT(False, ntsc_dbgstop(); );
+    ASSERT(hdl == st->clients[i].hdl, ntsc_dbgstop(); );
+    ASSERT((st->vpp == vpp), ntsc_dbgstop(); );
+    ASSERT((t->state == Blocked), ntsc_dbgstop(); );
+    ASSERT((t->state == Runable), ntsc_dbgstop(); );
+    ASSERT(!VP$ActivationMode(evt_st->vpp), ntsc_dbgstop(); );
+    ASSERT(!VP$ActivationMode(st->vpp), ntsc_dbgstop(); );
+    ASSERT(!VP$ActivationMode(st->vpp), ntsc_dbgstop(););
+    ASSERT(!VP$ActivationMode(vpp), ntsc_dbgstop(); );
+	BENCHMARK_ALT(ntsc_map(VPN(base), PFN(pbase), BITS(VALID(pte))), 
+	BENCHMARK(ntsc_send(txep, i));
+    BENCHMARK(ntsc_yield());
+    BENCHMARK(pte = ntsc_trans(VPN(base))); 
+      bits = ntsc_trans(i);
+	  bits = ntsc_trans(VPN(vaddr));
+** Call from fast_map() on a successful ntsc_map(). 
+  contents 
+#define ASSERT(cond) ASSERTA(cond, ntsc_dbgstop();)
+#define ASSERT(_x) if(!(_x)) { eprintf("Stubgen
+//#define DBOUT(x) ntsc_putcons(x)
+#define DomainFail() ntsc_dbgstop()
+#define ENTER(x) x = ntsc_ipl_high()
+#define GET_FLOAT32_ARG(_sf, _dest) ntsc_dbgstop()
+#define GET_FLOAT64_ARG(_sf, _dest) ntsc_dbgstop()
+#define GROW_FUNC(f) ntsc_dbgstop()
+#define LEAVE(x) x = ntsc_swpipl(x)
+#define _ntsc_h_
+#define ntsc_halt() ntsc_dbgstop()
+#define ntsc_ipl_high() ntsc_swpipl(0)  /* disable all interrupts */
+#define __ntsc_tgt_h__
+#define ntsc_trans(_vpn) 						\
+#define panic(f, _args...) {eprintf(f);ntsc_dbgstop();}
+#define panic(why)           ({eprintf(why) ; ntsc_dbgstop(); })
+#define SET_FLOAT32_ARG(_sf, _src) ntsc_dbgstop()
+#define SET_FLOAT64_ARG(_sf, _src) ntsc_dbgstop()
+#define SKIP_FLOAT32_ARG(_sf) (ntsc_dbgstop(), NULL)
+#define SKIP_FLOAT64_ARG(_sf) (ntsc_dbgstop(), NULL)
+**      Defines the kernel environment - direct linkage to ntsc_xxx,
+#define TRCMUF(_x) { if (debugmuf) { int ipl = ntsc_ipl_high(); _x; ntsc_swpipl(ipl); }  }
+#define VP$Block(self,until)	ntsc_block (until)
+#define VP$RFABlock(self,until)	ntsc_rfa_block (until)
+#define VP$RFA(self)		ntsc_rfa() 
+#define VP$Yield(self)		ntsc_yield()
+Directory('ntsc_generic', {
+do { eprintf(format, ## args); ntsc_halt(); } while(0)
+    DUMP_RESULTS("ntsc_send      ");
+    DUMP_RESULTS("ntsc_trans     ");
+	DUMP_RESULTS("ntsc_[un]map   ");
+    DUMP_RESULTS("ntsc_yield(off)");
+    DUMP_RESULTS("ntsc_yield(on) ");
+Eg. ntsc/ix86/intel is a subdirectory of ntsc_ix86; to grow
+#endif /* _ntsc_h_ */
+#endif /* __ntsc_tgt_h__ */
+#endif  /* ntsc_trans */
+	eprintf("ntsc_gprot returned error %d\n", rc);
+	eprintf("ntsc_gprot returned error %ld\n", (long)rc);
+            eprintf("ntsc_map
+	    eprintf("ntsc_map
+	eprintf("ntsc_prot returned error -%d\n", -((signed)rc));
+       Events$Attach does an ntsc_send causing the new domain to be woken
+		    evt_st->vpp, type, ect->ep_type ); ntsc_dbgstop();)
+extern NORETURN                (ntsc_actdom(dcb_ro_t *dom, uint32_t reason));
+extern NORETURN	               (ntsc_chain(addr_t start, uint32_t length,
+extern NORETURN                (ntsc_dbgstop    (void));
+extern NORETURN                (ntsc_reboot     (void));
+extern void                     ntsc_kevent(dcb_ro_t *rop, Channel_RX rx,
+extern void			ntsc_putcons(uint8_t c);
+extern void                     ntsc_setpgtbl(addr_t hw, addr_t sw, addr_t t);
+extern void                     ntsc_wrpdom(addr_t pdom);
+extern word_t                   ntsc_gprot(word_t vpn, word_t np, word_t xs);
+extern word_t                   ntsc_map(word_t vpn, word_t idx, word_t bits);
+extern word_t                   ntsc_nail(word_t vpn, word_t np, word_t xs);
+extern word_t                   ntsc_prot(word_t pdid, word_t vpn, 
+/* extern word_t                   ntsc_trans(word_t vpn); XXX now inlined */
+/* Hack function to stop gcc optimising around the ntsc_dbgstop() call */
+	'h/alpha' 
+	'h/intel' 
+** ID 
+  if (!(addr) || size < length) {eprintf("Stretch too small");ntsc_dbgstop();}	\
+	    if (alwaysTrue()) ntsc_dbgstop();
+    if (block_size != EXT2_MIN_BLOCK_SIZE) ntsc_dbgstop();
+    if (dir->rd) ntsc_dbgstop();
+	if (getrd(self) != FSTypes_RC_OK) ntsc_dbgstop();
+#ifndef _ntsc_h_
+#ifndef __ntsc_tgt_h__
+#ifndef ntsc_trans
+    if(nrecs != 2) ntsc_dbgstop();  /* Paranoia */
+		if (++n > st->num_eps) ntsc_dbgstop();
+    if( (pte = ntsc_trans(vpn)) == NULL_PTE)
+    if((*pte = ntsc_trans(VPN(vaddr))) == MEMRC_BADVA)
+    if( (pte = ntsc_trans(((word_t)address) >> PAGE_WIDTH)) == MEMRC_BADVA)
+	if((pte = ntsc_trans((word_t)newro >> PAGE_WIDTH)) == MEMRC_BADVA) {
+    if( (rc = ntsc_gprot(vpn, npages, 0x7))) {
+    if( (rc = ntsc_gprot(vpn, npages, access))) {
+    if((rc = ntsc_map(vpn, pfn, BITS(pte)))) {
+    if(( rc = ntsc_prot(pdid, vpn, npages, 0))) {
+    if(( rc = ntsc_prot(pdid, vpn, npages, access))) {
+    if (Rd$GetChars(dir->rd, buf, len) != len) ntsc_dbgstop();
+    if (!rd) ntsc_dbgstop();
+	if(rec->hr_size == 0x42424242) ntsc_dbgstop();
+    if (req->op != FileIO_Op_Read) ntsc_dbgstop();
+	if(sanity >= 0x100) ntsc_dbgstop();
+		    if (st->common->rxQ) ntsc_dbgstop();
+    if(st->have_keyb) ntsc_unmask_irq(KC_IRQ);
+	if(st->have_keyb) ntsc_unmask_irq(KC_IRQ);
+    if(st->have_mouse) ntsc_unmask_irq(AUX_IRQ);
+	if(st->have_mouse) ntsc_unmask_irq(AUX_IRQ);
+    if(st->inthd) ntsc_dbgstop();
+  if (!str) {eprintf("Couldn't get stretch");ntsc_dbgstop();}			\
+#include <ntsc.h>		/* defines ntsc_XXX()  */
+#include <ntsc.h>		/* XXX For ntsc_dbgstop */
+#include <ntsc_tgt.h>		/* target-dep definitions of the above	*/
+	    int_hb[2], patch_hb[2], ntsc_hb[2]);
+      "Invoke ntsc_dbgstop().\n"},
+      "Invoke ntsc_reboot().\n"},
+    ipl = ntsc_ipl_high();
+    ipl = ntsc_ipl_high(); /* before checking owner state */
+**      ix86/ntsc_tgt.h
+        je      ntsc_mmgmt                /* If not, bail to debugger   */
+	je	ntsc_mmgmt              /* if not, continue below       */
+	je	ntsc_mmgmt            /* if so, bail into debugger   */
+	jge	ntsc_mmgmt	          /* Context slot out of range */
+	jge	ntsc_mmgmt	          /* If so => ntsc debugger     */
+	jnz     ntsc_fiddle           /* if so, try to patch it up */
+	jnz     ntsc_mmgmt                /* If not => ntsc debugger    */
+	jz      ntsc_mmgmt              /* If so => ntsc debugger       */
+	    k_printf("ntsc_gprot
+		    k_printf("ntsc_gprot
+	k_printf("ntsc_gprot called before MMU code has registered.\n");
+	    k_printf("ntsc_map
+	k_printf("ntsc_map
+	k_printf("ntsc_map called before MMU code has registered.\n");
+	k_printf("ntsc_map called before there is a domain!\n");
+	    k_printf("ntsc_nail
+		    k_printf("ntsc_nail
+	k_printf("ntsc_nail
+    (k_printf("ntsc_nail called
+	k_printf("ntsc_nail called before MMU code has registered.\n");
+	    k_printf("ntsc_prot
+	k_printf("ntsc_prot
+	k_printf("ntsc_prot called before MMU code has registered.\n");
+	k_printf("ntsc_selpmctr called but processor not PPro or better.\n");
+	k_printf("ntsc_trans
+	k_printf("ntsc_trans called before MMU code has registered.\n");
+	k_printf("ntsc_wrpdom
+    /* Memory management info for ntsc_trans|map|unmap etc */
+	    /* Need ntsc_flush_evs() */					 \
+		    /* Need ntsc_flush_evs() */
+    NOCLOBBER ntsc_rc_t rc = rc_success;
+    ntsc_actdom(RO(vp), Activation_Reason_Allocated);
+    ntsc_callpriv(st->callpriv, (word_t)st->arg, (word_t)recs, (word_t)nrecs, 0);
+    ntsc_chain(buff, length, cmdline);
+            ntsc_dbgstop();
+      ntsc_dbgstop();
+    ntsc_dbgstop();
+    ntsc_dbgstop(); 
+	    ntsc_dbgstop();
+		    ntsc_dbgstop();
+			    ntsc_dbgstop();
+			ntsc_dbgstop();
+		ntsc_dbgstop();
+	ntsc_dbgstop();
+	ntsc_dbgstop();				\
+	    ntsc_dbgstop(); /* Shouldn't be any other value */
+	ntsc_dbgstop(); /* What be this ? XXX */
+	    ntsc_dbgstop();  /* XXX SMH
+		ntsc_dbgstop(); /* XXX Something's broken ... */
+	    ntsc_dbgstop();  /* yet another debugger... */
+	   ntsc_enablepaging();
+    ntsc_entkern();
+	ntsc_entkern();
+	ntsc_entkern(); /* There is an NTSC hack that prevents this
+ntsc_fiddle
+    ntsc_flushtlb();
+	   ntsc_flushtlb();
+        //ntsc_halt();
+        ntsc_halt();
+      ntsc_halt();
+    ntsc_halt();
+    ntsc_halt();				\
+	    ntsc_halt();
+	    ntsc_halt();      
+	  ntsc_halt();
+	  ntsc_halt();      
+		    ntsc_halt();
+			    ntsc_halt();
+			ntsc_halt();
+		ntsc_halt();
+	ntsc_halt();
+	ntsc_halt();	
+	    ntsc_halt();  /* XXX for the moment */
+    ntsc_hb[0]  = INFO_PAGE.nheartbeat;				\
+    ntsc_hb[1]  = INFO_PAGE.nheartbeat;				\
+    ntsc_hb[2]  = ntsc_hb[1] - ntsc_hb[0];			\
+	    ntsc_kevent(peer_dcb, (Channel_RX) peer_ep, 0);
+    ntsc_leavekern();				\
+	ntsc_leavekern();
+	ntsc_map(pi->vpn, PFN_PTE(*pte), UNREF(BITS(*pte))); 
+		      ntsc_map(VPN(base), PFN(pbase), BITS(UNMAP(pte))) ); 
+    ntsc_mask_irq(irq);
+    ntsc_mask_irq(KC_IRQ);
+    ntsc_mask_irq(st->irq);
+ntsc_mmgmt
+NTSC('ntsc_ix86', {
+    ntsc_putcons(c);
+} ntsc_rc_t;
+ *   ntsc_rc_t    ntsc_mask_irq     (word_t irq);
+ *   ntsc_rc_t ntsc_send  (Channel_TX tx, Event_val val);
+ *   ntsc_rc_t ntsc_unmask_irq (word_t irq); */
+    ntsc_rc_t r;
+    ntsc_rc_t	 rc;
+    ntsc_rc_t      rc     = rc_success;
+    ntsc_reboot();
+    ntsc_rfa_resume (cs);						\
+    ntsc_smp_msg(SMP_MSG_ALL_BUT_SELF, SMP_MSG_RESCHED_FIRST, 0);
+    ntsc_swpipl(ipl);
+	    ntsc_swpipl(ipl);
+		ntsc_swpipl(ipl);
+	ntsc_swpipl(ipl);
+  ntsc_swpipl(old_ipl);                      \
+    ntsc_tbi(-1, 0); 
+    ntsc_tbi(-2, 0);
+    ntsc_tbi(-2, 0);            /* invalidate all TB entries */
+    ntsc_tbi(-2, 0);           /* invalidate all TB entries */
+	ntsc_tbi(3, (addr_t)((start_vpn+i) << PAGE_WIDTH));
+	ntsc_tbi(3, (addr_t)((vpn+i) << PAGE_WIDTH));
+    ntsc_unmask_irq(dev->irq);
+  ntsc_unmask_irq(dev->irq);
+    ntsc_unmask_irq(irq);
+    ntsc_unmask_irq(KC_IRQ);
+    ntsc_unmask_irq(np->irq);
+	    ntsc_unmask_irq(np->irq);
+        ntsc_unmask_irq(st->irq);
+    ntsc_unmask_irq(st->irq);
+	ntsc_unmask_irq(st->irq);
+	ntsc_unmask_irq(st->uart.irq);
+    ntsc_wptbr(st->va_l1, st->pa_l1, st->vtab_va); //PDBR syscall
+    ntsc_wrpdom(base);
+    ntsc_wrpdom(base, asn);    /* set the protection domain */
+    ntsc_wrpdom(pbase, asn);    /* set the protection domain */
+    ntsc_wrptbr((addr_t)st->pptbr, ppdtbl_pa);
+    ntsc_wrptbr((addr_t)st->psptbr, (addr_t)st->lptbr, ppdtbl_pa);
+    ntsc_wrptbr(st->ptbl, &st->pdom_tbl[0] /* XXX 121 mapping here */);
+	    ntsc_yield();						 \
+		    ntsc_yield();
+  old_ipl = ntsc_ipl_high();          
+	    pte = ntsc_trans(last_va >> PAGE_WIDTH); 
+	pte = ntsc_trans(last_va >> PAGE_WIDTH); 
+	*pte = ntsc_trans(pi->vpn); 
+		    pte = ntsc_trans(pi->vpns[i]); 
+	    pte = ntsc_trans(start_va >> PAGE_WIDTH); 
+	pte = ntsc_trans(start_va >> PAGE_WIDTH); 
+	  pte = ntsc_trans((word_t)mem >> PAGE_WIDTH);
+    rc = ntsc_callpriv(st->callpriv, st->sid, rec, 0, 0); 
+	    rc = ntsc_send (ect->ep, ect->val);
+		    rc= ntsc_send (ect->ep, ect->val);
+		rc= ntsc_send (tx->ep, tx->val);
+    /* Save this for later (XXX SMH
+static int INLINE ntsc_callpriv(word_t vec, 
+static int INLINE ntsc_swpipl(int ipl)
+static int                      ntsc_callpriv   (word_t vector, word_t arg1,
+static int			ntsc_swpipl(int ipl);
+static ntsc_rc_t INLINE ntsc_mask_irq(int irq)
+static ntsc_rc_t INLINE ntsc_send(Channel_TX tx, Event_Val val)
+static ntsc_rc_t INLINE ntsc_unmask_irq(int irq)
+static ntsc_rc_t                ntsc_mask_irq(int irq);
+static ntsc_rc_t		ntsc_send  (Channel_TX tx, Event_Val val);
+static ntsc_rc_t		ntsc_unmask_irq(int irq);
+static void INLINE ntsc_block(Time_T until)
+static void INLINE ntsc_entkern(void)
+static void INLINE ntsc_flushtlb(void)
+static void INLINE ntsc_leavekern(void)
+static void INLINE ntsc_rfa_block(Time_T until)
+static void INLINE ntsc_rfa_resume(VP_ContextSlot cx)
+static void INLINE ntsc_rfa(void)
+static void INLINE ntsc_yield(void)
+static void			ntsc_block      (Time_T until);
+static void                     ntsc_entkern(void);
+static void                     ntsc_flushtlb(void);
+static void                     ntsc_leavekern(void);
+static void			ntsc_rfa_block  (Time_T until);
+static void                     ntsc_rfa_resume (VP_ContextSlot cx);
+static void   			ntsc_rfa        (void);
+static void			ntsc_yield      (void);
+SYS1ARGL (ntsc_block,      NTSC_BLOCK_ENTRY)     
+SYS1ARGL (ntsc_rfa_block,  NTSC_RFA_BLOCK_ENTRY) 
+SYS1ARG  (ntsc_mask_irq,   NTSC_MASK_IRQ_ENTRY)  
+SYS1ARG  (ntsc_putcons,    NTSC_PUTCONS_ENTRY)    
+SYS1ARG  (ntsc_rfa_resume, NTSC_RFA_RESUME_ENTRY)
+SYS1ARG  (ntsc_setdbgreg,  NTSC_SETDBGREG_ENTRY) 
+SYS1ARG  (ntsc_swpipl,     NTSC_SWPIPL_ENTRY)    
+SYS1ARG  (ntsc_unmask_irq, NTSC_UNMASK_IRQ_ENTRY)
+SYS1ARG  (ntsc_wrpdom,     NTSC_WRPDOM_ENTRY)  
+SYS2ARGS (ntsc_actdom,     NTSC_ACTDOM_ENTRY)    
+SYS2ARGS (ntsc_send,       NTSC_SEND_ENTRY)      
+SYS3ARGS (ntsc_chain,      NTSC_CHAIN_ENTRY)     
+SYS3ARGS (ntsc_evsel,      NTSC_EVSEL_ENTRY)     
+SYS3ARGS (ntsc_gprot,      NTSC_GBLPROT_ENTRY)      
+SYS3ARGS (ntsc_kevent,     NTSC_KEVENT_ENTRY)    
+SYS3ARGS (ntsc_map,        NTSC_MAP_ENTRY)       
+SYS3ARGS (ntsc_nail,       NTSC_NAIL_ENTRY)     
+SYS3ARGS (ntsc_wptbr,      NTSC_WPTBR_ENTRY)     
+SYS4ARGS (ntsc_prot,       NTSC_PROT_ENTRY)      
+SYS5ARGS (ntsc_callpriv,   NTSC_CALLPRIV_ENTRY)  
+SYSNOARGS(ntsc_dbgstop,    NTSC_DBGSTOP_ENTRY)
+SYSNOARGS(ntsc_entkern,    NTSC_ENTKERN_ENTRY)   
+SYSNOARGS(ntsc_flushtlb,   NTSC_FLUSHTLB_ENTRY)  
+SYSNOARGS(ntsc_leavekern,  NTSC_LEAVEKERN_ENTRY) 
+SYSNOARGS(ntsc_reboot,     NTSC_REBOOT_ENTRY)
+SYSNOARGS(ntsc_rfa,        NTSC_RFA_ENTRY)       
+SYSNOARGS(ntsc_yield,      NTSC_YIELD_ENTRY)     
+** this routine [use ntsc_map instead]. 
+    TRC(eprintf("Benchmarks
+    TRC(k_printf("ntsc_gprot
+		TRC(k_printf("ntsc_gprot
+	TRC(k_printf("ntsc_gprot
+    TRC(k_printf("ntsc_gprot called
+    TRC(k_printf("ntsc_map
+    TRC(k_printf("ntsc_map called
+    TRC(k_printf("ntsc_nail
+		TRC(k_printf("ntsc_nail
+	TRC(k_printf("ntsc_nail
+    TRC(k_printf("ntsc_nail called
+    TRC(k_printf("ntsc_prot
+	TRC(k_printf("ntsc_prot
+    TRC(k_printf("ntsc_prot called
+    TRC(k_printf("ntsc_trans
+    TRC(k_printf("ntsc_trans called
+	TRC(printf("      ps=%qx\n", ntsc_rdps()));
+	/* TRY currently costs a setjmp. Calling ntsc_send directly rather */
+ *   void   ntsc_block      (Time_T until);
+ *   void   ntsc_halt ();                   -- halt the machine
+ *   void   ntsc_rfa_block  (Time_T until);         -- Time_T = word_t
+ *   void   ntsc_rfa_resume (VP_ContextSlot cx)     -- rfa resuming context cx
+ *   void   ntsc_rfa        (void)                  -- return from activation
+ *   void   ntsc_yield      (void);
+		    VP$GetSaveSlot (vpp), from->context); ntsc_dbgstop(); );
+** We provide an inline version of ntsc_trans() in here since the cost
+    while(ntsc_uart_putch(c));
+    word_t ipl = ntsc_ipl_high();
+	    word_t ipl = ntsc_swpipl(IPL_K_HIGH);
+		word_t ipl = ntsc_swpipl(IPL_K_HIGH);
+	word_t ipl = ntsc_swpipl(IPL_K_HIGH);
+ *   word_t ntsc_ipl_high ();               -- swap to all interrupts disabled
+ *   word_t ntsc_kernel_critical ();        -- swap to ipl_high and mode_kernel
+ *   word_t ntsc_mode_kernel ();            -- swap to kernel privilege
+ *   word_t ntsc_swap_status (word_t x);    -- swap processor status
+    word_t sched_hb[3], int_hb[3], patch_hb[3], ntsc_hb[3];
+    /* XXX ntsc_dbgstop() is currently declared noreturn, which means
+    /* XXX SMH

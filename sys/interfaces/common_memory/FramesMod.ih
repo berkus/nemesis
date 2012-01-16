@@ -1,0 +1,68 @@
+#ifndef _FramesMod_h_
+#define _FramesMod_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:35:43 2010
+ */
+
+typedef struct _FramesMod_cl FramesMod_cl;
+typedef FramesMod_cl *FramesMod_clp;
+typedef const struct _FramesMod_op FramesMod_op;
+
+struct _FramesMod_cl {
+	FramesMod_op	*op;
+#ifndef __FramesMod_STATE
+	addr_t	 st;
+#else 
+	__FramesMod_STATE	 *st;
+#endif 
+};
+
+#include "FramesF.ih"
+#include "RamTab.ih"
+#include "Mem.ih"
+
+#define FramesMod_clp__code (0xa15a6f85cfff0000ull)
+#define FramesMod_clp__wordconv (pointerval_t)
+
+
+
+
+typedef word_t FramesMod_Reqd_fn (
+	FramesMod_cl	*self,
+	Mem_PMem	allmem	/* IN */ );
+
+typedef FramesF_clp FramesMod_New_fn (
+	FramesMod_cl	*self,
+	Mem_PMem	allmem	/* IN */,
+	Mem_PMem	used	/* IN */,
+	RamTab_clp	rtab	/* IN */,
+	addr_t	state	/* IN */ );
+
+typedef void FramesMod_Done_fn (
+	FramesMod_cl	*self,
+	FramesF_clp	framesF	/* IN */,
+	Heap_clp	heap	/* IN */ );
+
+#ifndef __NO_METHOD_MACROS__
+#define FramesMod$Reqd(_self,_allmem) (((_self)->op->Reqd)((_self),(_allmem))) 
+#define FramesMod$New(_self,_allmem,_used,_rtab,_state) (((_self)->op->New)((_self),(_allmem),(_used),(_rtab),(_state))) 
+#define FramesMod$Done(_self,_framesF,_heap) (((_self)->op->Done)((_self),(_framesF),(_heap))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _FramesMod_op {
+	FramesMod_Reqd_fn	*Reqd;
+	FramesMod_New_fn	*New;
+	FramesMod_Done_fn	*Done;
+};
+
+
+
+#endif /* _FramesMod_h_ */

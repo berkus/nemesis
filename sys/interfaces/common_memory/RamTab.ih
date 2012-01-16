@@ -1,0 +1,79 @@
+#ifndef _RamTab_h_
+#define _RamTab_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:58:37 2010
+ */
+
+typedef struct _RamTab_cl RamTab_cl;
+typedef RamTab_cl *RamTab_clp;
+typedef const struct _RamTab_op RamTab_op;
+
+struct _RamTab_cl {
+	RamTab_op	*op;
+#ifndef __RamTab_STATE
+	addr_t	 st;
+#else 
+	__RamTab_STATE	 *st;
+#endif 
+};
+
+
+#define RamTab_clp__code (0xb15e8ccf5caf0000ull)
+#define RamTab_clp__wordconv (pointerval_t)
+
+#define RamTab_State__code (1 + RamTab_clp__code )
+#define RamTab_State__wordconv 
+
+
+typedef enum RamTab_State {
+	RamTab_State_Unused,
+	RamTab_State_Mapped,
+	RamTab_State_Nailed
+} RamTab_State;
+
+
+typedef uint32_t RamTab_Size_fn (
+	RamTab_cl	*self );
+
+typedef addr_t RamTab_Base_fn (
+	RamTab_cl	*self );
+
+typedef void RamTab_Put_fn (
+	RamTab_cl	*self,
+	uint32_t	pfn	/* IN */,
+	uint32_t	owner	/* IN */,
+	uint32_t	fwidth	/* IN */,
+	RamTab_State	state	/* IN */ );
+
+typedef uint32_t RamTab_Get_fn (
+	RamTab_cl	*self,
+	uint32_t	pfn	/* IN */
+   /* RETURNS */,
+	uint32_t	*fwidth,
+	RamTab_State	*state );
+
+#ifndef __NO_METHOD_MACROS__
+#define RamTab$Size(_self) (((_self)->op->Size)((_self))) 
+#define RamTab$Base(_self) (((_self)->op->Base)((_self))) 
+#define RamTab$Put(_self,_pfn,_owner,_fwidth,_state) (((_self)->op->Put)((_self),(_pfn),(_owner),(_fwidth),(_state))) 
+#define RamTab$Get(_self,_pfn,_fwidth,_state) (((_self)->op->Get)((_self),(_pfn),(_fwidth),(_state))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _RamTab_op {
+	RamTab_Size_fn	*Size;
+	RamTab_Base_fn	*Base;
+	RamTab_Put_fn	*Put;
+	RamTab_Get_fn	*Get;
+};
+
+
+
+#endif /* _RamTab_h_ */

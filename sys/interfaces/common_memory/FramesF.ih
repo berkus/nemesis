@@ -1,0 +1,65 @@
+#ifndef _FramesF_h_
+#define _FramesF_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:34:50 2010
+ */
+
+typedef struct _FramesF_cl FramesF_cl;
+typedef FramesF_cl *FramesF_clp;
+typedef const struct _FramesF_op FramesF_op;
+
+struct _FramesF_cl {
+	FramesF_op	*op;
+#ifndef __FramesF_STATE
+	addr_t	 st;
+#else 
+	__FramesF_STATE	 *st;
+#endif 
+};
+
+#include "Frames.ih"
+
+#define FramesF_clp__code (0xff8044ba0e260000ull)
+#define FramesF_clp__wordconv (pointerval_t)
+
+
+
+
+typedef Frames_clp FramesF_NewClient_fn (
+	FramesF_cl	*self,
+	addr_t	dcbva	/* IN */,
+	uint32_t	dcbpa	/* IN */,
+	uint32_t	gtdf	/* IN */,
+	uint32_t	xtraf	/* IN */,
+	uint32_t	nf	/* IN */ );
+
+typedef bool_t FramesF_AddFrames_fn (
+	FramesF_cl	*self,
+	Mem_PMem	region	/* IN */ );
+
+#ifndef __NO_METHOD_MACROS__
+#define FramesF$NewClient(_self,_dcbva,_dcbpa,_gtdf,_xtraf,_nf) (((_self)->op->NewClient)((_self),(_dcbva),(_dcbpa),(_gtdf),(_xtraf),(_nf))) 
+#define FramesF$AddFrames(_self,_region) (((_self)->op->AddFrames)((_self),(_region))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _FramesF_op {
+	Frames_Alloc_fn	*Alloc;
+	Frames_AllocRange_fn	*AllocRange;
+	Frames_Query_fn	*Query;
+	Frames_Free_fn	*Free;
+	Frames_Destroy_fn	*Destroy;
+	FramesF_NewClient_fn	*NewClient;
+	FramesF_AddFrames_fn	*AddFrames;
+};
+
+
+
+#endif /* _FramesF_h_ */

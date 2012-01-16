@@ -1,0 +1,81 @@
+#ifndef _Frames_h_
+#define _Frames_h_
+
+/*
+ * Machine generated using: 
+ * - front:	$Id: Main.c 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * - back:	$Id: ModBEIface.py 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ * by (null) on chakra
+ * at Tue Jun  8 18:35:34 2010
+ */
+
+typedef struct _Frames_cl Frames_cl;
+typedef Frames_cl *Frames_clp;
+typedef const struct _Frames_op Frames_op;
+
+struct _Frames_cl {
+	Frames_op	*op;
+#ifndef __Frames_STATE
+	addr_t	 st;
+#else 
+	__Frames_STATE	 *st;
+#endif 
+};
+
+#include "Mem.ih"
+#include "Heap.ih"
+
+#define Frames_clp__code (0x5ee6b3b4a94f0000ull)
+#define Frames_clp__wordconv (pointerval_t)
+
+
+
+
+typedef addr_t Frames_Alloc_fn (
+	Frames_cl	*self,
+	uint32_t	bytes	/* IN */,
+	uint32_t	fwidth	/* IN */ );
+
+typedef addr_t Frames_AllocRange_fn (
+	Frames_cl	*self,
+	uint32_t	bytes	/* IN */,
+	uint32_t	fwidth	/* IN */,
+	addr_t	start	/* IN */,
+	Mem_Attrs	attr	/* IN */ );
+
+typedef uint32_t Frames_Query_fn (
+	Frames_cl	*self,
+	addr_t	addr	/* IN */
+   /* RETURNS */,
+	Mem_Attrs	*attr );
+
+typedef void Frames_Free_fn (
+	Frames_cl	*self,
+	addr_t	a	/* IN */,
+	uint32_t	bytes	/* IN */ );
+
+typedef void Frames_Destroy_fn (
+	Frames_cl	*self );
+
+#ifndef __NO_METHOD_MACROS__
+#define Frames$Alloc(_self,_bytes,_fwidth) (((_self)->op->Alloc)((_self),(_bytes),(_fwidth))) 
+#define Frames$AllocRange(_self,_bytes,_fwidth,_start,_attr) (((_self)->op->AllocRange)((_self),(_bytes),(_fwidth),(_start),(_attr))) 
+#define Frames$Query(_self,_addr,_attr) (((_self)->op->Query)((_self),(_addr),(_attr))) 
+#define Frames$Free(_self,_a,_bytes) (((_self)->op->Free)((_self),(_a),(_bytes))) 
+#define Frames$Destroy(_self) (((_self)->op->Destroy)((_self))) 
+#endif /* __NO_METHOD_MACROS__ */
+
+#ifndef __NO_EXCEPTION_MACROS__
+#endif /* __NO_EXCEPTION_MACROS__ */
+
+struct _Frames_op {
+	Frames_Alloc_fn	*Alloc;
+	Frames_AllocRange_fn	*AllocRange;
+	Frames_Query_fn	*Query;
+	Frames_Free_fn	*Free;
+	Frames_Destroy_fn	*Destroy;
+};
+
+
+
+#endif /* _Frames_h_ */
