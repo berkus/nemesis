@@ -140,7 +140,7 @@ TypeSystemMod_New_m (TypeSystemMod_cl *self,
 		     LongCardTblMod_clp l,
 		     StringTblMod_clp s)
 {
-    extern void Register_Interfaces(TypeSystem_cl *ts);
+    // extern void Register_Interfaces(TypeSystem_cl *ts);
     TypeSystem_st *res;
 
     res=Heap$Malloc(h, sizeof(*res));
