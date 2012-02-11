@@ -1,0 +1,2132 @@
+List of all declared Nemesis interfaces and their brief descriptions. Extracted from all .if files in Nemesis distribution.
+(About 256 interfaces total)
+
+Interface descriptions follow this outline: """
+path/to/the/Interface.file
+  NameOfInterface
+-- Description
+-- Description
+-- Description
+"""
+
+Interfaces extending other interfaces are indicated with a tree:
+
+  Parent
+  +--Child
+
+Means Child interface extends Parent interface.
+
+
+== chapter Devices ==
+
+dev/interfaces/Kbd.if
+  Kbd
+-- "Kbd" is a generic low-level interface to a keyboard. It provides
+-- types which are typically transmitted via an "IO" channel. 
+
+dev/interfaces/Mouse.if
+  Mouse
+-- "Mouse" is a low-level interface to a mouse, similar in spirit to
+-- "Kbd". It defines a set of concrete data type which can be
+-- transmitted via an "IO" channel.
+
+dev/interfaces/RTC.if
+  RTC
+--			Device driver for Motorolla mc146818
+
+sys/interfaces/central/Clock.if
+  Clock
+--      Real-time clock driver interface
+--      Allows setting and reading real time/date.
+-- The "Clock" interface presents a basic, low-level interface to a
+-- real-time clock, such as that found on the EB64 VL82C113 SCAMP chip:
+
+dev/interfaces/Serial.if
+  Serial
+Input and output through serial ports is accomplished using the "Rd" and "Wr" interfaces. The "Serial" interface
+exists to provide out of band control over the serial ports; setting protocol, data rate and flow control states.
+
+dev/isa/ns16550/SerialMod.if
+  SerialMod
+Starts a serial port driver.
+
+dev/interfaces/Timer.if
+  Timer
+Every Nemesis implementation must provide a "Timer" interface for use as an interval timer by the domain scheduler
+within the NTSC. In theory the timer counts down from some value, but also maintains a notion of absolute time.
+All times are specified to the "Timer" in absolute nanoseconds, i.e. time since the start of the epoch. Since 
+the time value is at least 64 bits long, there should never be any need to reset the epoch. The actual timer 
+resolution is unlikely to be in nanoseconds, but it provides a useful common baseline.
+
+dev/isa/beep/Beep.if
+  Beep
+-- "Beep" is a simple interface to an internal speaker.
+
+dev/isa/vgaconsole/VGATextMod.if
+  VGATextMod
+--      Output to a VGA text-mode display
+-- Many architectures support a VGA standard text mode. This interface
+-- allows a number of writers to be obtained on this display.
+
+dev/interfaces/WTime.if
+  WTime (Wall-clock Time)
+--      Standard functions for retrieving the time
+--			and manipulating time structures.
+
+dev/interfaces/WTimeUpdate.if
+  WTimeUpdate
+--      Standard functions for updating 
+--			wall-clock time. These functions directly access
+--      and update values in the PIP.
+
+mod/net/interfaces/Netcard.if
+  Netcard
+--  Low level interface to network cards
+-- "Netcard" is the low-level interface between the top of the network card
+-- specific code and the bottom of "Netif": its operations are only
+-- used by "Netif".  It is a private interface internal to Ethernet
+-- card device driver domains.
+
+mod/net/interfaces/Netif.if
+  Netif
+-- "Netif" is the interface presented by Ethernet device drivers and
+-- used by the Flow Manager\footnote{see "FlowMan.if"} to plumb
+-- connections between Ethernet device drivers and protocol stacks in
+-- user domains.
+-- "Netif" separates transmit and receive channels -- each can be
+-- specified independently.
+-- "Netif" also allows the Flow Manager to control
+-- other global interface state, such as whether it is connected to
+-- the network.
+-- Only the Flow Manager should have access to this interface:
+-- misuse can compromise the security of this and other systems on the
+-- network.
+
+mod/net/interfaces/NetifMod.if
+  NetifMod
+-- "NetifMod" constructs control interfaces for network interfaces.
+
+mod/net/interfaces/SimpleIO.if
+  SimpleIO
+-- Sticks a packet up an IO sort of thing, with no IDC.  This
+-- interface is used solely between "Netif" and the card-specific
+-- network device driver code.
+
+mod/pci/PCIBios.if
+  PCIBios
+--      PCI bus and device management functions.
+--      Provides methods for locating and configuring PCI devices.
+
+mod/pci/PCIBiosMod.if
+  PCIBiosMod
+Initialise the PCI bus data structures. Builds internal datastructures describing the devices on the PCI bus(es)
+and returns an interface for manipulating them. Also adds the various memory ranges decoded by the devices on 
+the PCI bus(es) to the frames allocator.
+
+
+=== section Audio ===
+
+dev/interfaces/Au.if
+  Au
+--  Describes the contents of an Au_Rec, the data structure
+--      used to stored information about an aubuf
+-- This record describes a buffer, starting at base and going on for
+-- length samples. Each sample has channels number of channels, each
+-- one of which contains bits\_per\_channel bits padded out to
+-- channel\_stride bits. Sample stride is the number of bits between
+-- each sample. The samples are stored little endian if
+-- little_endianess is set to true.
+-- The master of the channel was last observed operating at master
+-- location number of samples in to the buffer, at system time 
+-- master\_timestamp. The master plays a sample every
+-- master\_sample\_period. It may take up to master\_granularity
+-- samples in advance.
+-- Clients may operate up to safe\_zone samples ahead of the current
+-- master position, in playback mode is playback is set to true
+-- otherwise in recording mode.
+-- For example, a Sound Blaster 16 driver playing back would export
+-- an Au\_Rec where playback = true, safe_zone would be nearly as
+-- large as length, channels=2, target\_rate=44100,
+-- little\_endianess=true, channel\_stride=16, bits\_per\_channel=16,
+-- sample\_stride=32, reader\_granularity=1, master\_sample\_period is
+-- approximately 1/44100.
+-- Au.Volume quantities are fixed point numbers with the low 16 bits
+-- fractional. Negative values inverts the phase of the digital signal.
+
+dev/interfaces/AuPlaybackWriter.if
+  AuPlaybackWriter
+--  Library for programs that write to a playback audio.
+
+dev/interfaces/AuMod.if
+  AuMod
+--  Factory module for various kinds of Au closures.
+
+
+=== section Block ===
+
+mod/fs/interfaces/BlockDev.if
+  BlockDev
+--      Low level IO to a block device. 
+-- Blocke devices are those to which it is only sensible to perform
+-- I/O in fixed size units.  Examples are disks and some tape drives.  
+-- The "BlockDev" interface abstracts the features common to such
+-- devices.
+
+=== section Disks ===
+
+mod/fs/interfaces/Disk.if
+  Disk
+-- The "Disk" interface provides a standardised abstraction of a 
+-- conventional rigid disk.  The underlying I/O operations are 
+-- as for any other block device, but the "Disk" interface also 
+-- provides methods for scheduling I/O accesses according to disk
+-- geometry etc.
+
+mod/fs/interfaces/RamDisk.if
+  Disk
+  +--RamDisk
+-- The "RamDisk" interface extends the "Disk" interface to provide
+-- an abstraction of a disk image held in main memory. It can be used
+-- in the same way as a standard "Disk" interface, but provides an
+-- additional method to free up the memory held by the disk.
+
+mod/fs/interfaces/RamDiskMod.if
+  RamDiskMod
+-- The "RamDiskMod" interface allows the creation of "RamDisk"
+-- interfaces.
+
+sys/interfaces/usd/USD.if
+  USD
+--      User Safe Disk
+
+sys/interfaces/usd/USDCallback.if
+  USDCallback
+--      User Safe Disk callbacks
+--     When a privileged application connects to a USD it must provide
+-- a USDCallback closure. This closure runs in the USD and provides
+-- access control and request monitoring. It \emph{may} just conduct
+-- IDC with the privileged application that provided it, though
+-- providing a cache of recent translations would be a good idea.
+
+sys/interfaces/usd/USDCtl.if
+  USDCtl
+--      User Safe Disk management interface. 
+--      A privileged application may communicate with a USD via the
+--  USDCtl interface. This interface allows the the application then
+--  manage streams between other applications and the USD. Note that
+--  when USDCtl requested (from a USDDrive) it must provide a
+--  USDCallback closure to provide protection and translation. The
+--  interface also gives the application a way of synchronously
+--  requesting data from the filesystem.
+
+sys/interfaces/usd/USDDrive.if
+  USDDrive
+--      Interface to a user-safe disk drive
+--    This provides an method of discovering information about USDs
+-- and for getting USDCtl offers for partitions.
+
+sys/interfaces/usd/USDMod.if
+  USDMod
+--      Creates generic user-safe disk interfaces.
+-- The "USDMod" interface is used to create instances of user-safe
+-- disks ("USD.if").
+
+
+=== section SCSI ===
+
+dev/scsi/interfaces/SCSI.if
+  SCSI
+-- abstraction of SCSI adapter interface
+
+dev/scsi/interfaces/SCSICallback.if
+  SCSICallback
+--      Callbacks from SCSI controller when a transaction is completed.
+
+dev/scsi/interfaces/SCSIController.if
+  SCSIController
+-- The "SCSIController" interface is used by higher level SCSI drivers to 
+-- enqueue commands for the devices they manage.  For example, SCSI disks
+-- or scanners use this interface to enqueue requests.  The controller only
+-- knows about generic SCSI commands.
+
+dev/scsi/interfaces/SCSIDisk.if
+  SCSIDisk
+-- creates a Disk object
+
+
+=== section Frame Buffer ===
+
+mod/fb/interfaces/FB.if
+  FB
+--      Interface provided by the Nemesis Client Rendering Frame Buffer
+
+mod/fb/interfaces/FBBlit.if
+  FBBlit
+--      Interface provided by the Nemesis Client Rendering Window 
+--      System server for synchronous drawing operations.
+
+mod/fb/interfaces/FBBlitMod.if
+  FBBlitMod
+--      Interface for creating FBBlit closures for a callpriv update
+--      stream 
+
+mod/fb/interfaces/HWCur.if
+  HWCur
+
+
+== chapter Files ==
+
+mod/fs/interfaces/Filesystem.if
+  Filesystem
+--      Interface exported by all filesystems
+
+sys/interfaces/central/Directory.if
+  Context
+  +--Directory
+--      Interface for filesystem directories
+-- A Directory is an extension of the Context interface which maps
+-- UNIX-like filenames to File objects. It differs from Context in
+-- that it provides the additional methods to open/create entries in
+-- a Directory with options.
+
+sys/interfaces/central/File.if
+  File
+-- A "File" is an extensible byte sequence, possibly backed by persistent
+-- storage.  Access to the bytes is via readers and writers obtained 
+-- using the operations described below.
+
+mod/nemesis/memfile/MemFile.if
+  MemFile
+-- A "MemFile" is a "File" stored in main memory.  The interface adds
+-- management operations to "File".  Creation is via the "MemFileMod"
+-- interface.
+
+mod/nemesis/memfile/MemFileMod.if
+  MemFileMod
+-- "MemFileMod" implements "MemFile"s over the allocator bound to
+-- "sys>StretchAllocator" in the PVS root "Context".
+
+
+== chapter Filesystems ==
+
+sys/interfaces/central/FileIO.if
+  IO
+  +--FileIO
+--      Low level interface for reading and writing the blocks of a file.
+-- The "FileIO" interface provides a means to read blocks of a file.
+-- It accepts file-relative block numbers and if necessary translates them
+-- for use by the underlying block device.  As with IO, it
+-- is completely asynchronous.
+-- Disk partitions, whole disks, etc. may also be accessed through this
+-- interface.
+
+mod/fs/ext2fs/Ext2.if
+  Ext2
+--      Internal Ext2fs interface
+
+mod/fs/interfaces/FSClient.if
+  FSClient
+--      Per-Client control-path interface to a file system.
+-- The "FSClient" interface is used to access a filesystem once it has been
+-- mounted. This interface is exported by all filesystems. 
+-- Data path operations are performed directly to the storage
+-- device(s) in question using a "Session" with a guaranteed Quality
+-- of Service. 
+
+mod/fs/interfaces/FSDir.if
+  FSDir
+--      A directory context within a filesystem
+-- The "FSDir" interface is a directory context for filesystem access.
+-- It encapsulates the concept of "current directory".
+
+mod/fs/interfaces/FSTypes.if
+  FSTypes
+-- The "FSTypes" interface contains types used throughout the other
+-- filesystem interfaces.
+
+mod/fs/interfaces/FSUtil.if
+  FSUtil
+-- The basic filesystem interfaces give raw block access to files. This
+-- interface allows `cooked' access to files through readers and writers.
+
+mod/fs/interfaces/MountLocal.if
+  MountLocal
+--      Mounts local filesystems
+-- This interface allows servers to be started for local filesystems.
+
+mod/fs/interfaces/MountRemote.if
+  MountRemote
+--      Mounts a remote filesystem
+-- This interface allows servers to be started for remote filesystems.
+
+mod/fs/nfs/NFS.if
+  NFS
+--      NFS interface in Middl.
+
+mod/fs/swapfs/Swap.if
+  Swap
+--      Interface to the Swap File System (SFS), a trivial extent 
+--      based FS with non-volatile files but volatile 'meta data'. 
+
+mod/fs/swapfs/SwapFS.if
+  SwapFS
+--      Creator module for the Swap File System. 
+
+
+== chapter Networks ==
+
+dev/atm/interfaces/AALPod.if
+  AALPod
+--      Gross interface for setting up AAL3/4 or 5 connections
+
+dev/atm/interfaces/ATM.if
+  ATM
+--      Datatypes for ATM connection setup
+
+dev/pci/oppo/DirectOppo.if
+  DirectOppo
+--      Interface to access an OPPO directly, at the lowest possible level
+
+mod/net/interfaces/Net.if
+  Net
+-- The "Net" interface defines useful types for networking.
+
+mod/net/DNS/DNS.if
+  DNS
+--  This interface provides procedures for resolving DNS queries
+--  both normal and inverse queries are handled at the moment.
+--  The types and classes in the arguments are defined in Resolver.h
+--  and are based on those types and classes that are those defined in
+--  RFC 1034, 1035.
+-- When quering you will get back the full answer buffer from the
+-- name-server that was defined when the module was created.
+
+mod/net/DNS/DNSMod.if
+  DNSMod
+-- The "DNSMod" module allows you to create an "IREF DNS" which asks the
+-- particular nameserver which you give as it's arguments.
+
+mod/net/interfaces/ARPMod.if
+  ARPMod
+-- Constructs an active context that performs ARP as per RFC1122
+-- (Internet Host Requirements) when names are looked up in it.
+
+mod/net/interfaces/Protocol.if
+  Protocol
+-- "Protocol.if" is the parent of all network protocols.  It
+-- defines the operations that can be done to network devices. They
+-- are stackable, and self-creating.  Protocols may be simplex or
+-- duplex. Duplex protocols can be made simplex when created by
+-- specifying "NULL" for one of the "IREF IO"'s at the bottom protocol
+-- layer. Receive operations on transmit only simplex protocols will
+-- raise a "Simplex" exception, and vice versa.
+
+mod/net/interfaces/BaseProtocol.if
+  Protocol
+  +--BaseProtocol
+-- BaseProtocol.if defines the operations that can be done to base
+-- network protocols.  In addition to all the standard operations
+-- availble from Protocol.if, there is a "Go" method that supplies
+-- real IOs to read and write to.
+
+mod/net/interfaces/Ether.if
+  Protocol
+  +--Ether
+-- The "Ether" interface encapsulates packets within Ethernet frames
+-- on transmit, and checks the Ethernet headers on receive.
+
+mod/net/interfaces/IP.if
+  Protocol
+  +--IP
+-- Encapsulates packets in IP datagrams.
+
+mod/net/interfaces/UDP.if
+  Protocol
+  +--UDP
+--      Encapsulates packets in UDP datagrams
+
+mod/net/interfaces/EtherMod.if
+  EtherMod
+-- EtherMod is used to create an "IREF Ether", which adds or strips
+-- Ethernet headers to packets going through it.
+
+mod/net/interfaces/FlowMan.if
+  FlowMan
+--      Manage network connection setup and close
+-- Used by client network code to build network connections to remote
+-- machines, using a variety of protocols.
+
+mod/net/interfaces/ICMP.if
+  ICMP
+--      Replies and sends ICMP messages on a single interface
+-- This is an interface internal to the Connection Manager, used by it
+-- to send ICMP messages.
+
+mod/net/interfaces/ICMPMod.if
+  ICMPMod
+--      Create an ICMP protocol instance
+
+mod/net/interfaces/InetCtl.if
+  InetCtl
+--      Out-of-band IP protocol exceptions
+
+mod/net/interfaces/IPConf.if
+  IPConf
+--      Configure the IP subsystem
+-- the "IPConf" interface can be used to create new IP host, add
+-- interfaces to them, etc
+
+mod/net/interfaces/IPMod.if
+  IPMod
+-- IPMod is used to create an IP protocol module, which adds or strips
+-- IP headers to the packets going through it.
+
+mod/net/interfaces/TFTP.if
+  TFTP
+-- The "TFTP" interface implements the trivial file transfer protocol
+-- described in RFC 1350.  TFTP's "octet" mode is used for all
+-- transfers.
+
+mod/net/interfaces/TFTPMod.if
+  TFTPMod
+--      Builds a TFTP module
+
+mod/net/interfaces/LMPFCtl.if
+  LMPFCtl
+--      Lean, Mean Packet Filter control interface
+-- "LMPFCtl" is the Lean, Mean packet filter control interface.  It
+-- is used to configure an LMPF created by a call to "LMPFMod$New()".
+
+mod/net/interfaces/LMPFMod.if
+  LMPFMod
+--      Lean, Mean Packet Filter creation interface
+
+mod/net/interfaces/PF.if
+  PF
+--  Native packet filter interface
+-- A native packet filter interface; deals with all things in one
+-- lump, so we only need one. 
+
+mod/net/interfaces/UDPMod.if
+  UDPMod
+--      Creates a UDP protocol module
+-- UDPMod is used to create a UDP protocol module, which adds or strips
+-- UDP headers to the packets going through it.  It can also be used
+-- to build an entire network stack.
+
+mod/net/netif/FragPool.if
+  FragPool
+--      Delay the processing of an IP fragment until either it times
+--      out, or its final demux destination becomes known.
+-- A "FragPool" is used internally be the "Netif" module for the
+-- management of un-reassembled fragments.
+-- It does {\bf not} fully reassemble fragments.  It simply delays the
+-- processing of buffers which are unmatched fragments until a head
+-- fragment comes in.  It should be assisted by the packet filter
+-- module, which returns "DELAY" for all IP fragments.  The packet
+-- filter should also return a valid "PF.Handle" if the packet was a
+-- head fragment.
+-- It is the client's responsibility to correctly piece together the
+-- resultant datagram.  Note that if the client's reassembly times
+-- out, the client MUST send an ICMP Time Exceeded (Reassembly
+-- Timeout) to the originator of the packet (RFC1122).
+
+mod/net/resolver/Resolver.if
+  Resolver
+--     Resolves hostnames and HQDNs into IP addresses
+-- The Resolver interface defines a procedure to convert a hostname or
+-- Fully Qualified Domain Name (FQDN) into the sequence of IP
+-- addresses that were returned from the name server that was defined
+-- when the resolver module was created.
+
+mod/net/resolver/ResolverMod.if
+  ResolverMod
+--  creates Resolver module      
+-- The ResolverMod module creates a resolver module allowing you to
+-- query the particular nameserver which you passed in as input
+
+mod/net/spans/Spans.if
+  Spans
+--      Interface to a server providing SPANS signalling.
+-- The "Spans" interface provides operations and callback definitions
+-- for a SPANS server.
+-- (berkus: ATM-related)
+
+sys/interfaces/entries/QoSEntry.if
+  IOEntry
+  +--QoSEntry
+-- A "QoSEntry" is an extension of an "IOEntry". It incorporates a
+-- scheduling policy for "IO" channels based loosely on the Nemesis
+-- EDF Atropos scheduler. This allows a quality of service to be
+-- defined for each IO channel in the form of a period and a slice of
+-- ``time'' to allocate during that period. When "Rendezvous" is
+-- called an IO channel is selected according to the QoS declarations
+-- for service by a single server thread. The server thread is then
+-- expected to serve a single packet from the IO channel, call
+-- "Charge", and return for another IO channel to service using
+-- "Rendezvous".
+-- The scheduling algorithm operates using three internal queues of IO
+-- channels - "Waiting", for channels that have work pending but have
+-- run out of allocation, "Idle", for IO channels that have no work
+-- pending and "Runnable", for IO channels that have work pending and
+-- have remaining time in their current period.
+
+sys/interfaces/entries/QoSEntryMod.if
+  QoSEntryMod
+-- Create a new "QoSEntry" capable of handling "nch" bindings. 
+
+
+== chapter Loader ==
+
+sys/interfaces/central/Load.if
+  Load
+--  Loader library interface
+
+sys/interfaces/central/Exec.if
+  Exec
+--      Convenient interface to domain creation.
+-- The "Exec" interface provides a convenient way of creating new
+-- domains.  It is especially suitable for use from command line
+-- interpreters which provide a syntax for creating "Context"s.
+
+mod/clanger/CExec.if
+  CExec
+--  Clanger Execute wrapper
+
+mod/clanger/Clanger.if
+  Clanger
+--      Evaluates 
+
+mod/clanger/ClangerMod.if
+  ClangerMod
+--      Produce Clangers
+
+mod/nashmod/Nash.if
+  Nash
+--      Evaluates 
+
+mod/nashmod/NashMod.if
+  NashMod
+--      Produce Nashs
+
+
+== chapter Naming Contexts ==
+
+sys/interfaces/central/Context.if
+  Context
+--      Provides a mapping from names to objects.
+-- Several parts of a Nemesis system need to associate string names
+-- with objects in some context.  Trading, file directory services,
+-- local name space management, and environments for machine booting
+-- and domain initialisation are all examples.  The "Context" interface
+-- provides a general abstraction for this purpose.
+-- A "Context" is a partial map "map" from \emph{arc-names} to "Type.Any"s
+-- (arbitrary values tagged with their type codes. An arc-name is a non-empty
+-- string which does not contain either of the separator characters defined
+-- below.
+-- A naming network of arbitrary topology can be built by registering
+-- one "Context" in another.  For convenience, the procedures in the
+-- "Context" interface interpret \emph{pathnames}.  Pathnames have the
+-- syntax:
+--|    Pathname  = ArcName { Separator ArcName }
+--|    Separator = '>'
+--|    ArcName   = [^>] { [^>] }
+
+mod/nemesis/context/ContextMod.if
+  ContextMod
+-- "ContextMod" is an interface to a module implementing
+-- general-purpose "Context"s and "MergedContext"s. Not all contexts
+-- will be generated in this way: some will be hardwired into the
+-- system at build time, others will be provided by remote proxies,
+-- filing systems, etc. Contexts which are to be created by domains for
+-- their own name space configuration will generally use an interface
+-- like this.
+
+mod/nemesis/context/ContextUtil.if
+  ContextUtil
+--      Does things with contexts
+
+mod/nemesis/context/MergedContext.if
+  MergedContext
+-- An ordered sequence of "Context"s can be combined into a single
+-- "MergedContext".  The "MergedContext" resolves arc-names by
+-- attempting to resolve them in each of the component "Context"s
+-- in turn.  "MergedContext"s can be used in local name spaces
+-- to replace search paths (as in Plan 9 \cite{pik:plan9}).
+
+
+== chapter Namespace ==
+
+mod/nemesis/tradedcontext/TradedContext.if
+  TradedContext
+--      Context shared between multiple clients using IDC
+
+mod/nemesis/tradedcontext/TradedContextMod.if
+  TradedContextMod
+--      Creates TradedContexts
+
+
+== chapter Input-Output Channels ==
+
+sys/interfaces/io/IO.if
+  IO
+--      Abstract stream inter-domain communication channels
+-- An IO channel transfers data in packets by a mechanism somewhat
+-- similar to the "rbuf"s described in \cite{rjb:thesis}.  A packet is
+-- described by an array of "IO_Rec"s, which are currently simply
+-- ("base","len") pairs, although this may change in the future to
+-- support more complex channels.
+-- NO internal concurrency control is performed. 
+
+sys/interfaces/io/IOMod.if
+  IOMod
+--  Stream IDC channels over shared memory and FIFOs
+-- "IOMod" implements the "IO" interface for inter-domain IOs.
+
+sys/interfaces/io/IOClosure.if
+  IOClosure
+--      IO thread Entry point. 
+-- An "IOClosure" is a general purpose type representing an entry-point
+-- that takes an "IO" argument, and any associated state.  The
+-- "IDCTransport" called "IOTransport" takes an "IOClosure.Info" as the
+-- "server" argument of its "Offer" procedure.
+
+sys/interfaces/io/IOData.if
+  IOData
+--  Types for the data areas of IO channels.
+-- The "IO_Rec"s transmitted across an "IO" channel contain references
+-- to data contained in some memory shared (in terms of access rights)
+-- between the parties involed in the communication. 
+-- Often these memory areas will be pre-agreed area during the binding
+-- of the channel --- this interface allows for the specificiation of
+-- both pre-allocated and to-be-allocated data areas.
+-- This interface currently deals purely with memory regions; it may
+-- be modified in the future to handle explicit "Stretch"s instead. 
+
+sys/interfaces/io/IONotify.if
+  IONotify
+--      IO callback closure. 
+-- An "IONotify" is a type representing a callback that an
+-- "IOTransport" should call when an IO offer is bound to by a client.
+-- An "IOTransport" takes an "IONotify" as an argument of its "Offer"
+-- method.
+
+sys/interfaces/central/FIFO.if
+  FIFO
+--      Bounded buffers of fixed-size elements.
+-- A "FIFO" is a handle on a bounded buffer of fixed-size \emph{slots}.
+-- The buffer may possibly be shared between domains.
+-- No internal concurrency control is exercised on the handle.
+
+sys/interfaces/central/FIFOMod.if
+  FIFOMod
+--  Single client, single server implementation of FIFO.if over
+--      shared memory and event channels.
+-- "FIFOMod" implements the "FIFO" interface for inter-domain FIFOs,
+-- by using a shared-memory buffer and a pair of event channels.
+
+sys/interfaces/callpriv/IOCallPriv.if
+  IOCallPriv
+--      Experimental Stream IDC channels using CALLPRIV transport
+-- "IOCallPriv" implements the "IO" interface for inter-domain IOs.
+
+
+== chapter Misc Interfaces ==
+
+mod/cline/CLine.if
+  CLine
+--      Provided with a "raw" Reader and Writer, return "cooked" versions.
+-- The "CLine" interface is used to add command line editing facilities
+-- to existing readers and writers.
+
+mod/cline/CLineCtl.if
+  CLineCtl
+-- CLineCtl allows for controlling the behaviour of CLine. It can be
+-- understood as sort of terminal control interface. Currently it only
+-- allows echo on/off. But if someone wants to implement
+-- canonical/noncanicial modes etc ...
+-- Currently this is very  ad-hoc.
+
+mod/stringutil/StringUtil.if
+  StringUtil
+--      Operations on strings (so one can do stuff in clanger).
+-- This is for use in clanger so that it can do useful stuff with strings.
+
+sys/nemesis/NTSC.if
+  NTSC
+--      User-space control over some aspects of NTSC
+
+sys/nemesis/ModData.if
+  ModData
+-- Arbitrary domains can load modules. This interface is a hack to allow
+-- them to register the modules that they've loaded in a central place so
+-- that the debugger can pick them up.
+
+mod/rssmonitor/RSSMonitor.if
+  RSSMonitor
+-- "RSSMonitor" is a module that can be used to measure to sample the
+-- proportion of pages in a stretch that are touched in a given time.
+
+mod/rssmonitor/RSSMonitorMod.if
+  RSSMonitorMod
+-- "RSSMonitorMod" is used to create a RSSMontior
+ -- Create and install a new RSSMonitor in the current domain.
+ -- If export is true, make it available to other domains via IDC
+ -- in a standard way.
+
+sys/interfaces/central/QoSCtl.if
+ QoSCtl
+--      Interface to get, set and monitor QoS parameters. 
+--      Currently these must be of the form { period, slice, latency,
+--      xtra }, though subtypes of this interface may support different
+--      quality of service models.
+--      This interface is exported by resource allocators, to allow
+--      their quality of service provisions to their clients to be
+--      queried and (optionally) modified.
+
+
+== chapter Hash functions ==
+
+mod/hash/interfaces/Hash.if
+  Hash
+-- An instance of the Hash interface is a handle on a hash function. It
+-- allows the hash to be updated with data as it becomes available, and
+-- allows the final value to be retrieved.
+
+mod/hash/interfaces/HashMod.if
+  HashMod
+-- One-way hash functions are useful in a number of situations.
+-- This interface allows instances of the Hash interface to be
+-- created.
+
+
+== chapter IDC ==
+
+sys/interfaces/idc/IDC.if
+  IDC
+--      Abstract inter-domain communication channels
+
+sys/interfaces/idc/IDCMod.if
+  IDCMod
+--  Single client, single server implementation of IDC.if over
+--      shared memory and a pair of event channels.
+-- "IDCMod" provides a simple implementation of the "IDC" interface,
+-- suitable for supporting procedure calls between domains on the
+-- same machine.  This implementation uses two shared memory buffers
+-- and a pair of event channels between a client domain and a server
+-- domain.
+
+sys/interfaces/idc/IDCOffer.if
+  IDCOffer
+--      Operations on an IDC offer (pre-binding)
+-- To offer a service to other domains, an application must create an
+-- "IDCOffer" for the service.  This is the closure whose reference is
+-- posted in a naming context; it encapsulates the state required to
+-- create a binding to the service.
+
+sys/interfaces/io/IOOffer.if
+  IDCOffer
+  +--IOOffer
+--      Operations on an IO offer. 
+-- To offer a streamed IO connection to other domains, an application 
+-- must create an "IOOffer".  This is the closure whose reference is
+-- posted in a naming context; it encapsulates the state required to
+-- create a binding to the IO.
+
+sys/interfaces/idc/IDCOfferMod.if
+  IDCOfferMod
+--      Provides various operations required for manipulating
+--      "IDCOffer"s and "IDCOffer.IOR"s
+
+sys/interfaces/idc/IDCBinding.if
+  IDCBinding
+--      Client control interface to an IDC binding
+-- Invoking "Bind" on an "IDCOffer" results in (if all goes well) an
+-- "IREF" of the required type, plus one of type "IDCBinding".
+-- "IDCBinding" interfaces are used for controlling aspects of a
+-- binding from the client's point of view; most notably, closing it
+-- down. 
+
+sys/interfaces/idc/IDCServerBinding.if
+  IDCServerBinding
+--      Server side of an execution protocol
+-- An "IDCServerBinding" provides the underlying system support for
+-- generated server stub code.  In other words, the generated code
+-- implementing the "IDCServerStubs" interface for a given binding
+-- calls this, generic code to deal with the reception of invocation
+-- requests and the transmission of replies.  This is the server
+-- counterpart of "IDCClientBinding".
+
+sys/interfaces/idc/IDCStubs.if
+  IDCStubs
+--      Types for describing IDC Stubs
+-- The "IDCStubs" interface defines types describing sets of IDC
+-- stubs.
+
+sys/interfaces/idc/IDCServerStubs.if
+  IDCServerStubs
+--      Control and dispatch interface to a particular client-server
+--      binding at the server end. 
+-- An "IDCServerStubs" is a server-side control and dispatch interface 
+-- to particular client-server binding using a particular set of stubs
+-- and marshalling code.
+
+sys/interfaces/idc/IDCService.if
+  BinderCallback
+  +--IDCService
+--      Server Domains's handle on an offered service. 
+-- When a "BinderCallback.Request" comes in to a domain from the binder,
+-- it should dispatched to the relevant "IDCService", typically by an
+-- "ObjectTbl".
+
+sys/interfaces/idc/IDCCallback.if
+  IDCCallback
+--      For those servers who want to know a little bit more about
+--              who is playing with their offers.
+-- The "IDCCallback" interface is used by servers who need to be 
+-- aware of the creation and destruction of bindings.
+
+sys/interfaces/idc/IDCClientBinding.if
+  IDCClientBinding
+--      Client control interface to an IDC binding
+-- Invoking "Bind" on an "IDCOffer" results in (if all goes well) an
+-- "IREF" of the required type, plus one of type "IDCClientBinding".
+-- "IDCClientBinding" interfaces are used for two purposes: firstly, they
+-- provide the means to create invocations, and are used by the
+-- surrogates for transmitting requests. Secondly, they allow control
+-- of a binding from the client's point of view; most notably, closing
+-- it down. 
+-- It is possible to map surrogates to and from the corresponding
+-- "IDCClientBinding"s by using the convention documented in
+-- the "IDCClientStubs" interface.
+
+sys/interfaces/idc/IDCClientStubs.if
+  IDCClientStubs
+--      Client-side state for an IDC binding.
+-- The "IDCClientStubs" interface defines the state available on
+-- the client end of any IDC binding.
+
+sys/interfaces/idc/IDCTransport.if
+  IDCTransport
+--      Interface to IDC transport mechanisms
+-- An "IDCTransport" interface represents a particular mechanism for
+-- communication. It is used to create "IDCOffer"s and corresponding
+-- "IDCService"s, which are interfaces hiding the business of creating
+-- bindings between domains. To offer a particular interface, an
+-- application calls "IDCTransport.Offer" supplying a closure for the
+-- service itself. The result is an "IDCOffer" which other applications can
+-- invoke in their own protection domains to create bindings to the
+-- service, and an "IDCService" which is used by the server's domain
+-- to control and withdraw the service, and is also called by the
+-- domains "ObjectTable" when a bind request generated by the
+-- "IDCOffer" comes in,
+
+sys/interfaces/io/IOTransport.if
+  IOTransport
+--      Interface to IO transport mechanisms
+-- An "IOTransport" interface represents a mechanism for "IO" channel
+-- connection setup.  To offer a particular channel, an application
+-- calls "IOTransport\$Offer" whch results in an "IOOffer" that 
+-- other applications can invoke in their own protection domains to 
+-- create their end of an "IO" connected to the server's domain.
+
+mod/nemesis/csidc/CSClientStubMod.if
+  CSClientStubMod
+--      Manufactures custom client-side stubs
+-- This interface allows custom client-side stub code to be instantiated.
+
+mod/nemesis/csidc/CSIDCTransport.if
+  CSIDCTransport
+--      Allows custom client stubs for IDC
+
+sys/interfaces/central/Binder.if
+  Binder
+--      Interface used by domains to request Event channels and
+--      higher-level IDC mechanisms
+-- The "Binder" is the system service which sets up event channels
+-- between domains.  The "Binder" is only responsible for the setting up
+-- and tearing down of event channels; communication over channels
+-- is performed exclusively by kernel code.  Furthermore, details of the
+-- communication method to be employed (shared memory buffers, etc.) are
+-- intended to be hidden behind the interface that builds the proxy,
+-- rather than dictated by the binder.  In this way different IDC
+-- mechanisms can coexist transparently on the same machine.
+
+sys/interfaces/central/BinderCallback.if
+  BinderCallback
+--  Server domain's interface to the same-machine IDC binder.
+-- A domain offering services accepts connection requests from the
+-- binder over an IDC channel established with "Binder.RegisterDomain".
+-- The binder makes a connection request on behalf of a client domain
+-- by calling the procedure "BinderCallback.Request" on this callback
+-- channel to the server domain.  This will typically be implemented
+-- by the domain's "ObjectTbl".
+
+mod/nemesis/rpc/Bouncer.if
+  Bouncer
+--      RPC binder interface
+-- A "Bouncer" acts in a similar way to a "Binder" for shared memory
+-- transport --- in the long run there probably ought to be a single
+-- binder-style interface suitable for all transports.
+
+mod/nemesis/rpc/RPCTransport.if
+  IDCTransport
+  +--RPCTransport
+--      Provides RPC connections between domains on different machines
+-- "RPCTransport" provides remote RPC connections and also extends 
+-- "IDCTransport" to provide support for bootstrap traders to create
+-- offers and pre-specified bindings
+
+mod/nemesis/rpc/RPCMod.if
+  RPCMod
+--      Creates RPCTransport closures
+
+mod/nemesis/sgen/StubGen.if
+  StubGen
+--      Interface to dynamic stub generator
+
+mod/nemesis/sgen/IDCMarshalCtl.if
+  IDCMarshalCtl
+--      Support for transports to control generation of marshalling
+--      byte code for operations. Used for callbacks by the stub
+--      generator
+
+sys/interfaces/idc/IORConverter.if
+  IORConverter
+--      Provides a method of converting back from an "IDCOffer.IOR" (a
+--      concrete representation of a service) to an "IDCOffer" closure
+--      (an abstract representation).
+-- A "IORConverter", when passed a sequence of "IOR"s, should look at
+-- the "IOR" at position "iornum" in the sequence, and attempt to
+-- convert it into an "IDCOffer" which will bind to the service
+-- represented by that "IOR". If an offer is returned, it should
+-- respect the full list of "IOR"s, in case the offer is later
+-- passed to a different domain which would need to use a different
+-- transport.  If the "IORConverter" cannot turn the specified "IOR"
+-- into an offer, it should return "NULL".
+
+sys/interfaces/idc/ObjectTbl.if
+  ObjectTbl
+--      Maintains table of exported interfaces for a domain
+-- An "ObjectTbl" is an IDC service which maintains a mapping from
+-- "IDCOffer"s to interfaces, either local services which have been
+-- "Export"ed or client stubs to services which have been
+-- "Import"ed. 
+-- The table handles incoming connection requests from other
+-- domains (which arrive via the "Binder"). A request for connection
+-- to an "IDCOffer" is looked up in the table and mapped to a
+-- "IDCService", which is invoked to create the server side
+-- connection state and return to the "Binder". 
+-- A second function of the table is when the domain is acting as a
+-- client: if it has received an "IDCOffer" and wishes to bind to it,
+-- it calls "Import" to return an interface of the appropriate
+-- type.  This is either a client surrogate, or the service itself if
+-- the offer has been around the houses and come back.
+
+sys/interfaces/idc/ObjectTblMod.if
+  ObjectTblMod
+--      Module for Object Table implementation
+-- "ObjectTbl"s can be instantiated by calling an "ObjectTblMod". 
+-- "New" creates a new "ObjectTbl" "o" and an instance "cb" of the
+-- "BinderCallback" interface.  The callback will be registered with
+-- the "binder" during the first export via "o".  Callbacks are then
+-- serviced by the "Pervasives" "entry".
+
+
+=== section Tasks and Entries ===
+
+sys/interfaces/entries/Entry.if
+  Entry
+-- An "Entry" is an object which encapsulates a scheduling policy
+-- for incoming invocation requests from a number of IDC bindings.
+-- This is based on the notion of entries in ANSAware/RT; for more
+-- information on the ANSAware/RT Computation and Engineering 
+-- models, see \cite{apm:rtengineering,apm:rtoverview}. 
+
+sys/interfaces/entries/EntryMod.if
+  EntryMod
+-- "EntryMod" is an interface used to create "Entry"s.
+
+sys/interfaces/entries/IOEntry.if
+  IOEntry
+--      Provides support for ANSAware/RT-style entrys.
+-- An "IOEntry" is an object which encapsulates \emph{a} scheduling policy
+-- for "IO" channels with pending packets.  It does for "IO" channels
+-- what the "Entry" interface does for IDC channels.
+-- An "IOEntry" is usally used when a domain wants to service a number
+-- of "IO" channels with a (smaller) number of threads.  The "IOEntry"
+-- provides roughly similar functionality to the \textsc{Unix} "select"
+-- call - only not as ugly.
+
+sys/interfaces/entries/IOEntryMod.if
+  IOEntryMod
+-- "IOEntryMod" is an interface used to create "IOEntry"s.
+
+sys/interfaces/central/Tasks.if
+  ThreadF
+  +--Tasks
+--      ANSAware/RT-style tasks.
+-- The "Tasks" interface extends the standard Nemesis "Threads"
+-- interface to include support for \emph{entries}. For more
+-- information on the ANSAware/RT Computation and Engineering models,
+-- see \cite{apm:rtengineering,apm:rtoverview}. 
+
+
+== chapter Memory ==
+
+sys/interfaces/common_memory/Mem.if
+  Mem
+--      Type definitions for the various kinds of memory descriptors.
+
+=== section Heaps ===
+
+sys/interfaces/central/Heap.if
+  Heap
+--      Malloc-style heap
+-- The "Heap" interface specifies a traditional "malloc"-style
+-- heap, with a few bells and whistles.
+
+sys/interfaces/central/LockedHeap.if
+  Heap
+  +--LockedHeap
+--      Malloc-style heap, protected with a SRCThread.Mutex
+-- The "LockedHeap" interface adds locking (with a "SRCThread.Mutex")
+-- to a "Heap".
+
+sys/interfaces/central/HeapMod.if
+  HeapMod
+--      Malloc-style heap -- four classes
+-- The "HeapMod" module provides four classes of "Heap".  Three are
+-- currently single-threaded; no locking is provided at all.  Locking
+-- can be added with a fourth class.
+-- A "Heap" can be created in an addressable region of memory, within 
+-- an existing "Heap", or completely filling a "Stretch". The size for
+-- a stretch-based "Heap" is determined by  the size of the "Stretch".
+-- A locked heap can be created from an existing "Heap".
+
+=== section Virtual Memory ===
+
+sys/interfaces/central/ProtectionDomain.if
+  ProtectionDomain
+--      Handle on a memory protection domain
+-- Protection Domains represent a mapping from the set of all virtual
+-- addresses to a set of protection rights (as specified in
+-- "Stretch.if"). They are created and destroyed via the "MMU"
+-- interface. 
+-- Protection Domains at present have no methods, but they do define 
+-- a type "ID", which is an opaque 'handle' on the protection domain. 
+-- This handle is used for invocations on the NTSC, or other system services. 
+
+sys/interfaces/common_memory/Stretch.if
+  Stretch
+--      Segments of virtual memory
+-- A \emph{stretch} is a contiguous area of the virtual address space,
+-- with the same accessibility throughout the range.
+-- Stretches are always a whole number of clicks in size; in other words
+-- they correspond to a set of contiguous pages. They are disjoint:
+-- they cannot overlap. One consequence is that stretches cannot be
+-- \emph{refined}: if you have a stretch it doesn't make sense to talk to
+-- the VM system about a subset of the stretch.
+-- A stretch is represented by an instance of the "Stretch" interface.
+
+sys/interfaces/common_memory/StretchAllocator.if
+  StretchAllocator
+--      Allocates Stretches.
+-- The Nemesis single virtual address space is divided into
+-- "Stretch"es.  To acquire a stretch of virtual memory, one invokes
+-- operations on a "StretchAllocator". 
+
+sys/memory/ifaces_expt/SAllocMod.if, sys/memory/ifaces_std/SAllocMod.if
+  SAllocMod
+--      A "SAllocMod" is what one uses to create a StretchAllocator.
+
+sys/memory/ifaces_expt/StretchAllocatorF.if, sys/memory/ifaces_std/StretchAllocatorF.if
+  StretchAllocator
+  +--StretchAllocatorF
+--      Allocates Stretches.  This extended interface also allows the
+--  creation of new stretch allocators.
+-- A "StretchAllocatorF" is an extention of the "StretchAllocator"
+-- interface. In addition to all the normal operations, it allows the
+-- creation of new "StretchAllocator"s. This may be in order to 
+-- service a \emph{client}; i.e. a particular domain and protection
+-- domain; or it may be for other special purposes. 
+
+=== section Physical Memory Allocation ===
+
+sys/interfaces/common_memory/Frames.if
+  Frames
+--      Allocator for physical page frames.
+--      Provides basic physical memory allocation and management.
+-- The bottom level of the memory system is a physical page frame
+-- allocator which implements the "Frames" interface.  The interface
+-- deals in byte addresses and sizes, but the amount of memory allocated
+-- will always be frame-aligned and rounded up to a whole number of frame.
+-- Note that there is no rigorous notion of a ``set'' of frames.  
+-- Unlike "Heap.Malloc", you can "Alloc" a number of frames in one go 
+-- and "Free" them piecemeal, or vice versa. However we do have the 
+-- notion of two different sorts of frames.
+--    - physical frames
+--    - logical frames
+-- A \emph{physical} frame is a piece of physical memory of size 
+-- FRAME\_SIZE [which is more or less guaranteed to be the same 
+-- as PAGE\_SIZE]. Equivalently one may consider the size of a physical
+-- frame to be $2^{FRAME\_WIDTH}$.
+-- In summary: a physical frame is the analog of a normal ``page'' in 
+-- the virtual address space. 
+-- A \emph{logical} frame, on the other hand, is a naturally aligned 
+-- piece of physical memory of size $2^{FRAME\_WIDTH + k}$, where 
+-- $k \geq 0$. Different regions of the physical address space may 
+-- have different logical frame sizes. Additionally, a client may 
+-- request (via "Alloc" or "AllocRange") a number of bytes with a 
+-- given "frame width" --- this is used to constrain alignment and 
+-- rounding (`bytes' will be rounded up). It also means that the 
+-- allocated memory will be accounted [internally] as a logical frame 
+-- of the appropriate width. When freeing at a particular start
+-- address, the 'bytes' will be rounded up to the logical frame width 
+-- with which they were allocated.
+-- In summary: a logical frame is (roughly) the analog of a 
+-- ``superpage'' in the virtual address space. 
+
+sys/interfaces/common_memory/FramesF.if
+  Frames
+  +--FramesF
+--      Extended allocator for physical page frames.
+--      Allows allocation and freeing of frames, plus the 
+--      creation of per-domain "Frames" interfaces. 
+-- The "FramesF" interface provides --- in addition to the basic
+-- allocation & freeing of physical memory --- a mechanism whereby the
+-- system can create a new per-domain interface for physical memory
+-- allocation. 
+-- It also allows for the extension of the set of physical regions 
+-- managed by the frames allocator in the case that not all
+-- information was available at the time of its creation (i.e. at the
+-- time FramesMod$New was invoked). This typically occurs with the
+-- laying out of device address spaces. 
+
+sys/interfaces/common_memory/FramesMod.if
+  FramesMod
+--      Creates an allocator for physical page frames.
+--      Creates a Frames interface to manage a set of regions of the
+--      physical address space.
+-- The "Frames" interface is implemented by "FramesMod".
+
+=== section Translation and Protection ===
+
+sys/interfaces/common_memory/MMU.if
+  MMU
+--      Encapsulates machine/arch-specific protection info and operations.
+-- The "MMU" interface is used for the creation and deletion of
+-- \emph{protection domains}, and for the adding, freeing or updating
+-- of ranges of virtual ranges to the translation structures. 
+
+sys/interfaces/common_memory/MMUMod.if
+  MMUMod
+--      A "MMUMod" is what one uses to create a "MMU". 
+
+sys/interfaces/common_memory/RamTab.if
+  RamTab
+--      Low-level table for marking ownership, etc, of parts 
+--      of a machines RAM. 
+--      Keeps track of which domains own which physical frames of 
+--      memory within RAM, and whether or not the frames are currently
+--      mapped onto, or nailed down, etc. 
+-- Domains in Nemesis are themselves responsible for providing physical
+-- backing to virtual addresses. In order to sanity check the
+-- physical addresses presented for this purpose, a system wide table
+-- is maintained with ownership (and other) information about frames. 
+
+=== section Paging and Fault Handling ===
+
+sys/memory/ifaces_expt/StretchDriver.if, sys/memory/ifaces_std/StretchDriver.if
+  StretchDriver
+--      A "StretchDriver" is a thing which is responsible for dealing 
+--      with faults on a stretch. In general, every "Stretch" is
+--      associated with some "StretchDriver". 
+--      Note that the StretchAllocator and/or Stretch interfaces are
+--      enough for most people; they should never need to access this
+--      interface directly.
+
+sys/memory/ifaces_expt/SDriverMod.if
+  SDriverMod
+--      A "SDriverMod" is what one uses to create a StretchDriver.
+
+sys/memory/ifaces_expt/FaultHandler.if
+  FaultHandler
+--      A "FaultHandler" is a user-specified object which overrides
+--      the default stretch driver implementation for a given type
+--      of memory fault. 
+
+sys/interfaces/common_memory/MMEntry.if
+  MMEntry
+--      The MMEntry deals with (satisfiable and non-satisfiable)
+--      memory faults caused by some thread within a given domain.
+-- A "MMEntry" is an object which schedules various memory faults
+-- to be satisfied (if applicable), blocking and unblocking faulting
+-- threads appropriately. 
+
+sys/interfaces/common_memory/MMEntryMod.if
+  MMEntryMod
+--      Fabricates an MMEntry for a threaded domain.
+
+sys/interfaces/common_memory/MMNotify.if
+  ChannelNotify
+  +--MMNotify
+--      A MMNotify is type of ChannelNotify which deals with
+--      memory management events.
+
+sys/interfaces/common_memory/MMNotifyMod.if
+  MMNotifyMod
+--      Creator interface for "MMNotify"
+
+
+=== section Shared Memory Buffers ===
+
+mod/nemesis/gatekeeper/Gatekeeper.if
+  Gatekeeper
+-- The "Gatekeeper" of a domain keeps track of the "Stretch"es it owns
+-- for the purposes of Interdomain communication of some sort.
+-- Its methods provide a convenient way for a domain to get hold of a
+-- heap or stretch which can be used for either standard IDC or for a 
+-- higher layer shared memory protocol (e.g. IO channels). 
+
+mod/nemesis/gatekeeper/GatekeeperMod.if
+  GatekeeperMod
+-- A "GatekeeperMod" is used by a domain at startup to create a
+-- "Gatekeeper". There are a number of different types of "Gatekeeper"
+-- which may be created depending on the requirements of the domain.
+
+
+== chapter Readers and Writers ==
+
+sys/interfaces/central/Rd.if
+  Rd
+-- The "Rd" interface is a near-wholesale steal of the SRC readers
+-- interface described in chapter~6 of \cite{nel:SPwM3}, which see.
+-- An "IREF Rd" (or ``reader'') is a character input stream.  The basic
+-- operation on a reader is "GetC", which returns the source
+-- character at the ``current position'' and advances the current
+-- position by one.  Some readers are ``seekable'', which means that
+-- they also allow setting the current position anywhere in the
+-- source.  For example, readers from random access files are
+-- seekable; readers from terminals and sequential files are not.
+-- 
+-- Some readers are ``intermittent'', which means that the source of
+-- the reader trickles in rather than being available to the
+-- implementation all at once.  For example, the input stream from an
+-- interactive terminal is intermittent.  An intermittent reader is
+-- never seekable.
+-- 
+-- Abstractly, a reader "rd" consists of
+-- 
+--| len(rd)           `the number of source characters`
+--| src(rd)           `a sequence of length "len(rd)+1"`
+--| cur(rd)           `an integer in the range "[0..len(rd)]"`
+--| avail(rd)         `an integer in the range "[cur(rd)..len(rd)+1]"`
+--| seekable(rd)      `a boolean`
+--| intermittent(rd)  `a boolean`
+-- 
+-- These values are not necessarily directly represented in the data
+-- fields of a reader object.  In particular, for an intermittent
+-- reader, "len(rd)" may be unknown to the implementation.  But in
+-- principle the values determine the state of the reader.
+-- 
+-- The sequence "src(rd)" is zero-based: "src(rd)[i]" is valid for "i"
+-- from 0 to "len(rd"). The first "len(rd)" elements of "src" are the
+-- characters that are the source of the reader.  The final element is
+-- a special value "eof" used to represent end-of-file.  The value
+-- "eof" is not a character.
+-- 
+-- The value of "cur(rd)" is the index in "src(rd)" of the next
+-- character to be returned by "GetC", unless "cur(rd) = len(rd)",
+-- in which case a call to "GetC" will raise the exception
+-- "EndOfFile".
+-- 
+-- The value of "avail(rd)" is important for intermittent readers: the
+-- elements whose indexes in "src(rd)" are in the range
+-- "[cur(rd)..avail(rd)-1]" are available to the implementation and
+-- can be read by clients without blocking.  If the client tries to
+-- read further, the implementation will block waiting for the other
+-- characters.  If "rd" is not intermittent, then "avail(rd)" is equal
+-- to "len(rd)+1".  If "rd" is intermittent, then "avail(rd)" can
+-- increase asynchronously, although the procedures in this interface
+-- are atomic with respect to such increases.
+-- 
+-- The definitions above encompass readers with infinite sources.  If
+-- "rd" is such a reader, then "len(rd)" and "len(rd)+1" are both
+-- infinity, and there is no final "eof" value.
+-- 
+-- Every reader is a monitor; that is, it contains an internal lock
+-- that is acquired and held for each operation in this section, so
+-- that concurrent operations will appear atomic.
+
+sys/interfaces/central/Wr.if
+  Wr
+-- The "Wr" interface is a near-wholesale steal of the SRC writers
+-- interface described in chapter~6 of \cite{nel:SPwM3}, which see.
+-- An "IREF Wr" (or ``writer'') is a character output stream.  The basic
+-- operation on a writer is "PutC", which extends a writer's
+-- character sequence by one character. Some writers (called
+-- ``seekable writers'') also allow overwriting in the middle of the
+-- sequence.  For example, writers to random access files are
+-- seekable, but writers to terminals and sequential files are not.
+-- 
+-- Writers can be (and usually are) buffered. This means that
+-- operations on the writer don't immediately affect the underlying
+-- target of the writer, but are saved up and performed later.  For
+-- example, a writer to a disk file is not likely to update the disk
+-- after each character.
+-- 
+-- Abstractly, a writer "wr" consists of:
+--
+--| len(wr)       `a non-negative integer`
+--| c(wr)         `a character sequence of length "len(wr)"`
+--| cur(wr)       `an integer in the range "[0..len(wr)]"`
+--| target(wr)    `a character sequence`
+--| seekable(wr)  `a boolean`
+--| buffered(wr)  `a boolean`
+--
+-- These values are generally not directly represented in the data
+-- fields of a writer object, but in principle they determine the
+-- state of the writer.
+-- 
+-- The sequence "c(wr)" is zero-based: "c(wr)[i]" is valid for "i"
+-- from 0 through "len(wr)-1".  The value of "cur(wr)" is the index of
+-- the character in "c(wr)" that will be replaced or appended by the
+-- next call to "PutChar".  If "wr" is not seekable, then "cur(wr)" is
+-- always equal to "len(wr)", since in this case all writing happens
+-- at the end.
+-- 
+-- The difference between "c(wr)" and "target(wr)" reflects the
+-- buffering: if "wr" is not buffered, then "target(wr)" is updated to
+-- equal "c(wr)" after every operation; if "wr" is buffered, then
+-- updates to "target(wr)" can be delayed.  For example, in a writer
+-- to a file, "target(wr)" is the actual sequence of characters on the
+-- disk; in a writer to a terminal, "target(wr)" is the sequence of
+-- characters that have actually been transmitted.  (This sequence may
+-- not exist in any data structure, but it still exists abstractly.)
+-- 
+-- If "wr" is buffered, then the assignment "target(wr) := c(wr)" can
+-- happen asynchronously at any time, although the procedures in this
+-- interface are atomic with respect to such assignments.
+
+mod/nemesis/netcons/RdRedir.if
+  RdRedir
+-- The "RdRedir" interface is an extended "Rd" interface which
+-- supports one extra method to set the destination reader.
+
+mod/nemesis/netcons/RdRedirMod.if
+  RdRedirMod
+-- The "RdRedirMod" allows the creation of redirecting readers.
+
+mod/nemesis/netcons/WrRedir.if
+  WrRedir
+-- The "WrRedir" interface is an extended "Wr" interface which
+-- supports one extra method to set the destination writer.
+
+mod/nemesis/netcons/WrRedirMod.if
+  WrRedirMod
+-- The "WrRedirMod" allows the creation of redirecting writers.
+
+mod/nemesis/rdwr/RdWrMod.if
+  RdWrMod
+--      Manufactures various types of readers and writers
+
+sys/interfaces/central/ConsoleWr.if
+  Wr
+  +--ConsoleWr
+--  Console Writers
+-- A "ConsoleWr" is a special writer to the console.  It has no
+-- new methods, but introducing a distinct type allows the use of
+-- custom IDC stubs for the console.
+
+sys/nemesis/ConsoleControl.if
+  ConsoleControl
+--      Allows the destination of system console output to be controlled
+
+
+== chapter Domains, Events and Activation ==
+
+sys/interfaces/central/Time.if
+  Time
+--      Types for talking about time.
+-- Several Nemesis components deal with time.
+
+sys/interfaces/central/TimeNotify.if
+  TimeNotify
+--      Hooks for handling timeouts from an activation handler.
+-- An "TimeNotify" interface is called \emph{within the activation
+-- handler} of a VP. 
+
+sys/domains/Domain.if
+  Domain
+--      Types for talking about Nemesis domains.
+-- Nemesis has a single virtual address space shared by all system
+-- components.  A Nemesis system consists of a number of distinct
+-- entities called \emph{domains}.  A domain comprises
+-- a set of access rights to portions of the single address space
+-- (a \emph{protection domain}) and some number of threads.  Threads
+-- are multiplexed by a user-level thread scheduler over the domain's
+-- \emph{virtual processor}, the kernel-schedulable entity associated
+-- with the domain.
+
+sys/domains/DomainMgr.if
+  DomainMgr
+--      Creates domains.
+-- The domain manager implements the "DomainMgr" interface, which
+-- provides operations to create a new domain, specifying its
+-- scheduling parameters, and to destroy a domain.  At present,
+-- this interface is concerned only with kernel-level scheduling.
+-- In the future, facilities will be provided to alter the scheduling
+-- parameters of a running domain (to support the QoS manager), and to
+-- support the loader.
+
+sys/interfaces/central/Activation.if
+  Activation
+--      Vector via which the real processor is given to a VP.
+-- A domain differs from the normal concept of a user process
+-- in the way in which the processor is presented to it.
+-- The domain's user-level scheduler can be explicitly informed
+-- when the processor is given to the domain by invocations on
+-- its \emph{activation vector}, an "IREF Activation" associated
+-- with the domain's \emph{virtual processor} (VP).
+-- A domain may be activated because
+--   * it was preempted and has now been rescheduled,
+--   * it yielded or ran out of contracted CPU time and has now been given a fresh allocation,
+--   * it ran out of contracted CPU time and has now been allocated some extra time, or
+--   * events have been delivered to it.
+--   * it has been reactivated by itself.
+
+sys/interfaces/central/ActivationF.if
+  ActivationF
+--      Hooks for registering activation handling code.
+-- "ActivationF" (need new name) deals with demuxing events to
+-- "ChannelNotify" handlers and invoking "TimeNotify" handlers
+-- whenever timeouts are observed to be reached.
+-- It generally sits directly on top of the VP (i.e. as an activation
+-- handler), and after performing its actions upcalls the next
+-- activation handler.
+
+sys/interfaces/central/ActivationMod.if
+  ActivationMod
+--      Used to create an ActivationF interface to run over a particular VP.
+-- The "ActivationMod" interface is used to create an instance of an
+-- "ActivationF.if" to run over a particular VP.
+
+sys/interfaces/central/Builder.if
+  Builder
+--      Creates domains with more state than the DomainMgr usually
+--      supplies.
+-- Since a large number of Nemesis domains will generally require the
+-- same state created on the "Pervasives" when they start up, the
+-- "Builder" is provided to automate this process.
+
+sys/interfaces/central/ChainedHandler.if
+  ChainedHandler
+--      A base type for chains of handler closures e.g. for event
+--      notifications or timeouts.
+-- A "ChainedHandler" interface is used as the base type for handler
+-- closures which may be chained together. It allows members of the
+-- chain to insert/remove themselves into/from the chain cleanly.
+
+sys/interfaces/central/Channel.if
+  Channel
+--      Types for event channels.
+-- Events are transmitted between virtual processors over event
+-- channels.  User code does not normally manipulate channels; instead,
+-- it uses associated event counts via its user-level scheduler.  The
+-- "Channel" interface defines the channel-related types used by lower
+-- levels.
+
+sys/interfaces/central/ChannelNotify.if
+  ChainedHandler
+  +--ChannelNotify
+--      Hooks for handling events on a particular VP channel.
+-- An "ChannelNotify" interface is called \emph{within the activation
+-- handler} of a VP. 
+-- Currently channel notifications are used by the "Entry" and "Tasks"
+-- style inter-domain communication, as described in the ANSAware/RT 
+-- Computation and Engineering models; and also by various other things.
+
+sys/interfaces/central/Closure.if
+  Closure
+--      Entry point. 
+-- A "Closure" is a general purpose type representing an entry-point
+-- and some associated state.
+
+mod/nemesis/spawn/Spawn.if
+  Spawn
+--      Allows control of 'spawn' stubs
+-- A "Spawn" interface is a handle on a stub that allows domains to be
+-- created with any method as an entry point.
+
+mod/nemesis/spawn/SpawnMod.if
+  SpawnMod
+--      Creates interface surrogates that spawn new domains
+-- The Builder and Exec utilities assume that the entry point of a new
+-- domain is to be the Apply method of a Closure interface. The Spawn module
+-- enables domains to be started using any method of any interface as
+-- an entry point, and arranges for appropriate parameters to be passed
+-- to the new domain. When the method called in the new domain returns,
+-- the result is returned to the parent.
+
+mod/nemesis/spawn/SpawnReturn.if
+  SpawnReturn
+--      Internal interface for the Spawn module
+-- Once a new domain has been spawned it will invoke the appropriate operation.
+-- The result of the operation needs to be returned to the caller; the child
+-- domain will bind to its parent and use the method in this interface to
+-- return the result.
+-- This is an internal interface of the Spawn module.
+
+sys/interfaces/central/VP.if
+  VP
+--      User-level Virtual Processor management; for use by
+--      user-level schedulers.
+-- The kernel scheduler communicates with a domain's user-level
+-- scheduler via state and operations on the domain's Virtual
+-- Processor (VP).
+
+
+== chapter Tables ==
+
+mod/nemesis/tables/LongCardTbl.if
+  LongCardTbl
+--      Hash table mapping LongCards to ADDRESS
+-- A "LongCardTbl" is a partial map from "LONG CARDINAL"s to "ADDRESS"es.
+-- A typical implementation will use a hash table.
+
+mod/nemesis/tables/LongCardTblIter.if
+  LongCardTblIter
+--      LongCard table iterator
+-- A "LongCardTblIter" successively returns the "(key, value)" pairs
+-- stored in a "LongCardTbl".
+
+mod/nemesis/tables/LongCardTblMod.if
+  LongCardTblMod
+-- The "LongCardTbl" interface is implmented by "LongCardTblMod".
+
+mod/nemesis/tables/StretchTbl.if
+  StretchTbl
+--      Mapping from "Stretch"es to "StretchDrivers".
+-- A "StretchTbl" is a partial map from "Stretch"es to page width 
+-- information (for mapping) and "StretchDrivers".
+-- A typical implementation might use a hash table.
+
+mod/nemesis/tables/StretchTblMod.if
+  StretchTblMod
+--      Creator for "StretchTbl"s.
+-- The "StretchTbl" interface is implmented by "StretchTblMod".
+
+mod/nemesis/tables/StringTbl.if
+  StringTbl
+--      Hash table mapping STRINGs to ADDRESS
+-- A "StringTbl" is a partial map from "STRING"s to "ADDRESS"es.
+-- A typical implementation will use a hash table.
+
+mod/nemesis/tables/StringTblIter.if
+  StringTblIter
+--      String table iterator
+-- A "StringTblIter" successively returns the "(key, value)" pairs
+-- stored in a "StringTbl".
+
+mod/nemesis/tables/StringTblMod.if
+  StringTblMod
+-- The "StringTbl" interface is implemented by "StringTblMod".
+
+mod/nemesis/tables/WordTbl.if
+  WordTbl
+--      Hash table mapping WORDs to ADDRESS
+-- A "WordTbl" is a partial map from "WORD"s to
+-- "ADDRESS"es. A typical implementation will use a hash
+-- table. Due to the inherent type-danger of this approach, use of
+-- such tables will generally be hidden within other modules (for
+-- example, the "ObjectTbl").
+
+mod/nemesis/tables/WordTblIter.if
+  WordTblIter
+-- A "WordTblIter" successively returns the "(key, value)" pairs
+-- stored in a "WordTbl".
+
+mod/nemesis/tables/WordTblMod.if
+  WordTblMod
+--      Instantiates WordTbl interfaces
+-- The "WordTbl" interface is implmented by "WordTblMod".
+
+
+== chapter Low-level Interfaces ==
+
+sys/domains/DomainMgrMod.if
+  DomainMgrMod
+--      Creates a domain manager
+-- The "DomainMgrMod" interface is used at system startup to create
+-- the state necessary for a "DomainMgr" to function. Initialisation
+-- occurs in two stages: firstly "New" is called. This creates enough
+-- of the Domain Manager to create an initial domain for the
+-- system. Then, once this domain has built enough run-time state for
+-- the rest of the Manager to function, "Done" is called to finish the
+-- process and enable creation of further domains.
+
+sys/interfaces/callpriv/CallPriv.if
+  CallPriv
+--  Allocation interface for device privileged sections
+-- Device privileged sections are a way for device drivers to register
+-- atomic routines that can be executed by a client within the device
+-- driver's pdom
+
+sys/interfaces/central/Interrupt.if
+  Interrupt
+--      Provides functions to register stubs to handle interrupts
+-- Interrupts are dealt with by running a tiny stub. The stub's job is to
+-- clear the interrupt condition, doing as little as possible to
+-- achive this. Typical stubs will want to send an event to the
+-- corresponding driver domain to inform the domain of the arrival of
+-- an interrupt. In order to do this, each stub is passed a state
+-- pointer.
+
+sys/interfaces/central/Plumber.if
+  Plumber
+-- \epigraph{
+--   ``Are you happy with your ducting?\\
+--     Call Central Services...''\\
+-- }{Terry Gilliam}{1984}
+-- 
+-- Oops!  Sorry, wrong operating system...
+-- The "Plumber" is the system library which deals with event 
+-- channels and event delivery at the lowest level, by getting in
+-- up to the elbows in the slime of domain control blocks.  Calls on
+-- this interface can only be made by code with system privileges
+-- (e.g., the binder).  Concurrency control is provided by the implementation,
+-- which must preserve the caller's interrupt priority level.
+-- The caller must be in kernel privilege mode.  The implementation is
+-- target-dependent.
+-- This is the all-new, lightweight Plumber interface with half the
+-- methods of your previous Plumber. Plumber.Inc and Plumber.Send weren't
+-- being used, and identical functionality exists in the "ntsc_kevent" and
+-- "ntsc_send" system calls anyway.
+
+sys/interfaces/central/BootDomain.if
+  BootDomain
+--      Type definition for boot domain information.
+-- The BootDomain Info type is used to store (in the ">progs>"
+-- context) information regarding the domains to be started up.
+-- "cl" is the closure representing the entry point of the domain, 
+-- "name" is its name as a string, "stackBytes" is the size of 
+-- the default stack for this domain, "aHeapBytes" is the size of 
+-- the domains activation heap, "pHeapBytes" the (intial) size of
+-- its pervasive heap. 
+-- "nctxts" specifies the number of context slots, "neps" the number
+-- of endpoints, and "nframes" the initial size of its frame stack.
+-- "p", "s", "l", and "x" are the domain's requested 'QoS', while
+-- the "k" flag determines kernel privilege or not. 
+-- "priv_root" is a (possibly empty) context specific to this 
+-- domain, and "pdid" is the requested protection domain (or NULL\_PDID).
+
+
+== chapter Pervasive Interfaces ==
+
+sys/interfaces/central/Pervasives.if
+  Pervasives
+-- The use of the pervasives pointer in Nemesis is entirely a matter
+-- of convention at the user level. There is no reason not to have
+-- different domains with different pervasive interfaces, or indeed
+-- threads within a single domain having different pervasive interface
+-- types. However, one needs to be careful about interfaces which
+-- assume particular fields of the pervasives pointer when calling
+-- them. This interface specification defines one type of record,
+-- particularly useful with a conventional threads package in
+-- an environment a bit like Unix/C.
+-- For the moment, this record is quite full. In due course, it should
+-- become clear which components are really needed here and which can
+-- be passed as explicit arguments or looked up from the name space at
+-- run time.
+
+
+== chapter User Level Schedulers ==
+
+sys/interfaces/central/Event.if
+  Event
+--      Base types for event counts and sequencers.
+-- Nemesis uses "Event"s and "Channel"s as the abstraction for
+-- communication betweeen virtual processors. This interface defines
+-- the basic types (including exceptions) for the "Events" and
+-- associated interfaces.
+
+sys/interfaces/central/Events.if
+  Events
+--      Operations for event counts, sequencers and channels.
+-- Nemesis provides a simple mechanism by which threads in a domain
+-- can synchronise with the occurrence of events caused by agents
+-- either within or outside that domain.  The mechanism is based on
+-- \emph{event counts}, whose values may be used to affect the scheduling
+-- of threads.  Two event counts may be coupled with an event \emph{channel},
+-- which causes the value of the receiving (RX) count to be updated with
+-- the value of the the transmitting (TX) count at certain times.
+
+sys/interfaces/central/EventsMod.if
+  EventsMod
+--      Used to create an Events interface to run over a particular VP.
+-- The "EventsMod" interface is used to create an instance of an
+-- "Events.if" to run over a particular VP, and for the use of a user
+-- level scheduler. 
+
+sys/interfaces/central/Thread.if
+  Thread
+--      Handle on a thread
+-- A handle on a thread is provided by an instance of the "Thread"
+-- interface, which is returned from a call to "Threads.Fork".
+
+sys/interfaces/central/Threads.if
+  Threads
+--      Forking user-level threads.
+-- Multiple threads of control may be created in a Nemesis domain
+-- via the "Threads" interface, provided that the domain's user-level
+-- scheduler implements it. 
+
+sys/interfaces/central/ThreadHooks.if
+  ThreadHooks
+--  Thread hooks for Nemesis
+-- Libraries are informed of the creation and destruction of threads
+-- by callbacks on an instance of the "ThreadHooks" interface.
+
+sys/interfaces/central/ThreadF.if
+  Threads
+  +--ThreadF
+--  Thread hooks for Nemesis
+-- Some libraries (such as those that maintain per-thread state) need
+-- to take action when threads are created and destroyed.  They achieve
+-- this with a "ThreadHooks" closure registered with the ULS via the
+-- "ThreadF" interface.
+
+sys/interfaces/central/ThreadsPackage.if
+  ThreadsPackage
+--      Allows creation of a user level thread scheduler.
+-- A thread scheduler can be created by using an instance of the
+-- "ThreadsPackage" interface. Various implementations of thread
+-- schedulers may have differing scheduling policies.
+
+sys/interfaces/central/SRCThread.if
+  SRCThread
+--      SRC Thread synchronisation operations
+-- Event counts and sequencers as specified in the "Event" interface
+-- can be used directly to provide concurrency control for threads.
+-- It can be convenient to use other facilities built on top of events.
+-- The "SRCThread" interface provides the mutual-exclusion locks and
+-- condition variables of Modula-2+ \cite{rov:m2plus}, with an
+-- extension, WaitUntil.  There is an an introduction to their use in
+-- \cite{bir:threads-intro}.  See \cite{bir:threads-spec} for a formal
+-- specification; the specifications in this interface are lifted from
+-- \cite{SRC:M3-URL}, the SRC Modula-3 system.
+
+sys/interfaces/central/SRCThreadMod.if
+  SRCThreadMod
+--      Used to create a SRCThread interface to run over an
+--      Events interface. 
+-- The "SRCThreadMod" interface is used to create an instance of an
+-- "SRCThread.if" to run over a the pervasive "Events.if" interface. 
+
+
+== chapter Runtime Type System ==
+
+sys/typesystem/Type.if
+  Type
+--      Type definitions relating to how types are managed inside
+--      Nemesis (mainly by trading entities and the like).
+-- Nemesis contains a runtime dynamic type system.  It is used mainly
+-- by traders and suchlike things.  The "Type" interface gives the
+-- basic definitions on which the runtime type system is built.
+
+sys/typesystem/TypeSystem.if
+  Context
+  +--TypeSystem
+--      Maintains all information about the structure of abstract and
+--      concrete types in the system,
+-- A Nemesis system typically contains a single instance of the
+-- "TypeSystem" interface.  This is a "Context" in which every type in
+-- the system is registered.  The context maps type names to
+-- "Type.Code"s.
+-- The arc-names registered in the "TypeSystem" context are of the
+-- form
+--|    "Foo"       `(for interface types), or`
+--|    "Foo.Bar"   `(for concrete types defined in the `"Foo"` interface).`
+-- The "TypeSystem"'s "Get" method maps these type names to "Type.Any"s
+-- for the corresponding "Type.Code"s.
+
+sys/typesystem/TypeSystemF.if
+  TypeSystem
+  +--TypeSystemF
+--      TypeSystem friends interface
+-- The "TypeSystemF" interface provides a means for the runtime loader
+-- to register new types.
+
+sys/typesystem/TypeSystemMod.if
+  TypeSystemMod
+--      Instantiates TypeSystem interface
+-- The "TypeSystem" interface is implemented by "TypeSystemMod".
+
+sys/typesystem/Interface.if
+  Context
+  +--Interface
+--      Presents the structure of a given interface
+-- The "TypeSystem" represents \MIDDL\ interface types by instances
+-- of the "Interface" interface.
+-- The procedures inherited from "Context" map the names of each
+-- of the types declared in the interface represented by the current
+-- "Interface" to a "Type.Any" which represents the type in the
+-- manner described in "TypeSystem".  The list returned by the
+-- "List" procedure produces the type names in the order in which
+-- they are declared.
+
+sys/typesystem/Operation.if
+  Context
+  +--Operation
+--      Representation of a Middl operation
+-- The "TypeSystem" represents each method within a \MIDDL\
+-- interface type by an instance of the "Operation" interface.
+-- The procedures inherited from "Context" map the names of each of
+-- the operation fields (arguments and results) to instances of the
+-- "Parameter" data type. The sequence returned by the "List" method
+-- contains the parameters in the order in which they were defined, thus
+-- all those of kind "Result" come after the others.
+
+sys/interfaces/central/Exception.if
+  Context
+  +--Exception
+--      Representation of a Middl exception
+-- The "TypeSystem" represents each exception declared within a
+-- \MIDDL\ interface type by an instance of the "Exception" interface.
+
+sys/typesystem/Record.if
+  Context
+  +--Record
+--      Extension of Context used to represent elements of RECORD
+--      type class 
+-- The "TypeSystem" represents \MIDDL\ record types by instances
+-- of the "Record" interface.
+-- The "Context" part of this interface maps each of the represented 
+-- record's fields' names to a "Type.Any" for the "Field"
+-- representing the field.  The list returned by the "List"
+-- procedure produces the field names in the order in which they are
+-- declared.
+
+sys/typesystem/Choice.if
+  Context
+  +--Choice
+--      Extension of Context used to represent elements of CHOICE type class
+-- The "TypeSystem" represents \MIDDL\ choice types by instances
+-- of the "Choice" interface.
+
+sys/typesystem/Enum.if
+  Context
+  +--Enum
+--      Extension of Context used to represent elements of enumeration
+--      type class 
+-- The "TypeSystem" represents \MIDDL\ enumeration types by instances
+-- of the "Enum" interface.
+
+
+== chapter Exceptions ==
+
+sys/interfaces/central/ExnRegistry.if
+  ExnRegistry
+--  Nemesis Exception Handler Registry - loader's view
+--      User-level view of exception handling mechanism; used by
+--      exception macros.
+-- In the future, exceptions will be implemented with pc-range
+-- tables maintained by the Exception Registry.
+
+sys/interfaces/central/ExnSupport.if
+  ExnSupport
+--      User-level view of exception handling mechanism; used by
+--      exception macros.
+-- The stylised form of C used in Nemesis includes facilities
+-- for exception handling \cite{eve:exceptions}.  These facilities
+-- follow the style of Modula-3 \cite{nel:SPwM3}. The "ExnSupport"
+-- interface declares the basic types and operation needed to raise
+-- an exception.
+
+sys/interfaces/central/ExnSetjmp.if
+  ExnSupport
+  +--ExnSetjmp
+--      Extension of ExnSupport interface for an implementation based
+--      on setjmp.
+-- As an interim measure, exceptions are currently implemented with
+-- some macros defined in "exceptions.h".  These macros use "setjmp" to
+-- save state when establishing a handler block, and "longjmp"
+-- to restore it when entering a handler.
+
+sys/interfaces/central/ExnSystem.if
+  ExnSystem
+--      Module closure for exception handling
+-- "ExnSystem" is the interface type of a module which creates
+-- exception support interfaces ("ExnSupport").  Right now, it actually
+-- creates the subtype "ExnSetjmp", since that is the only available
+-- implementation. 
+
+
+== chapter Security ==
+
+sys/interfaces/central/Security.if
+  Security
+--      Low-level support for security in Nemesis
+-- Access control in Nemesis is mostly the responsibility of the various
+-- servers that make up the operating system. This low-level Security
+-- interface exists to improve efficiency; the names that it attaches to
+-- domains can be inherited by their children, removing the need for
+-- servers to be involved in this very common case of delegation.
+
+mod/security/interfaces/Login.if
+  Login
+--      Login system service
+-- It is traditional for users to authenticate themselves before being
+-- permitted to use system services...
+
+mod/security/loginprompt/LoginPrompt.if
+  LoginPrompt
+-- This will prompt the user to enter username and Password
+-- using the raw reader and writer passed as arguments.
+
+=== section Login ===
+
+mod/security/pcnfs/PcnfsLoginMod.if
+  PcnfsLoginMod
+-- This provides a pcnfs based login scheme. You have to tell it your
+-- pcnfsd server and i will return a Login interface as an IDC offer.
+-- This might be usefull for sites who use YP and/or shadow passwords.
+-- Note, that pcnfs doesn't provide all information tradtionally
+-- stored in /etc/passwd. For example it doesn't return the full
+-- username.
+
+mod/security/unix/UnixLoginMod.if
+  UnixLoginMod
+--      Create Login system service
+
+
+== chapter Debugging ==
+
+sys/interfaces/common_memory/GDB.if
+  GDB
+--      User-level GDB interface.
+--      Allows remote per-thread debugging without hosing the machine.
+-- "GDB" is the interface for intitiating user-level debugging.
+
+sys/interfaces/common_memory/GDBMod.if
+  GDBMod
+--      Creator interface for user-level debugging.
+--      Allows creation of a debugger interface for a faulting thread.
+-- "GDBMod" is the interface for creating interfaces of type "GDB".
+
+
+== chapter Window System ==
+
+mod/fb/interfaces/Region.if
+  Region
+--  Provides means of manipulating and passing geometrical regions,
+--  useful for dealing with clipping and exposure regions in
+--  windows
+
+mod/ws/interfaces/WS.if
+  WS
+--      Interface provided by the Nemesis Client Rendering Window 
+--      System.
+-- A "WS" closure forms the IDC interface for clients of the Window
+-- System. It allows clients to request changes to the position and
+-- shape of their windows, and to raise and lower them on the display.
+-- These requests may be carried out or ignored, depending on the
+-- policy implemented by the Window System.
+-- "WS" also allows clients to obtain:
+-- * Frame Buffer update streams for their windows. (See
+-- "FBBlit.if")
+-- * An event stream. This is an IO channel used by the Window
+-- System to pass events back to the client. 
+
+mod/ws/interfaces/WSF.if
+  WS
+  +--WSF
+--  Extended WS interface provided to window manager
+-- "WSF" is an extension to the "WS" interface allowing a window
+-- manager to have more control over the Window Server than is allowed
+-- to normal clients. The Window Server will create a "WSF" for each
+-- client which is given to the window manager. In addition to giving
+-- the window manager control over the client's connection, it allows
+-- operations to be performed atomically, and lets the window manager
+-- redirect events to clients other than the owner of the window
+-- associated with the event.
+
+mod/ws/interfaces/WM.if
+  WM
+--      Interface provided to the WS server by a window manager
+-- A "WM" is an interface provided by a window manager to the Window
+-- Server. It allows the server to inform the window manager when a
+-- new client is connecting, and when an event is available to be
+-- delivered. 
+
+mod/ws/interfaces/WMMod.if
+  WMMod
+-- "WMMod" is used to create new instances of a window manager.
+-- The Window Server calls "New" passing in a "WSF" that should be
+-- used by the window manager for creating its own windows (i.e. any
+-- windows that are not directly associated with a particular
+-- client). It should return a new "WM" to which the Window Server can
+-- pass new client requests.
+
+=== section Client Rendering ===
+
+mod/ws/interfaces/CRend.if
+  CRend
+--      Client Rendering module interface.
+-- Nemesis has a \emph{client rendering} library called CRend that
+-- provides simple two dimensional rendering facilities
+-- along the lines of XLib. Additionally, facilities are provided for
+-- talking to the windowing system to create, destroy and manipulate
+-- windows. The CRend library supercedes lib/WS.
+-- Before drawing operations can be performed, as a CRend object must
+-- be obtained. There are two sources of CRend objects provided by the
+-- library. First of all, one may create, using the CRendPixmap
+-- factory, a CRend object on a pixel map supplied by the
+-- programmer. There is no reason this pixel map must be assoicated
+-- with a window.
+-- Alternativly, the CRendDisplayMod factory may be used to cosntruct
+-- a CRendDisplay object. A CRendDisplay corresponds with a connection
+-- to the window system which was established when then CRendDisplay
+-- object was created. The CRendDisplay interface may then create
+-- windows. The create operation returns a CRend object which then is
+-- used to render on to the interface.
+-- Internally, all CRend objects render on to a pixel map. So, a CRend
+-- object created by CRendDisplay does not draw directly to the
+-- display. Instead, the Update operation on the object should be
+-- called to flush through the rendering to the display.
+-- \emph{The client rendering library is not, in general,
+-- clipped. Attempts to render off the edges of a window may well
+-- cause memory outside of the CRend pixel map to be modified. The
+-- programmer must ensure that any clipping required is performed
+-- prior to invocation of a rendering operation}.
+-- (The reasoning for this lack of clipping is as follows; if clipping
+-- were provided by the library, it would have to be performed on
+-- every rendering operation. In nearly all cases, it is possible to
+-- write code to use CRend such that clipping is not necessary or very
+-- much cheaper than at least one clip per render operation).
+
+mod/ws/interfaces/CRendDisplay.if
+  CRendDisplay
+--      Client Rendering module generator
+-- Objects with this interface are generated by CRendDisplayMod. They
+-- provide a means of creating windows with corresponding CRend
+-- objects. Additonally, service are provided to query the display
+-- size and event status and to retreive events pending on windows
+-- generated by this objects.
+
+mod/ws/interfaces/CRendDisplayMod.if
+  CRendDisplayMod
+--      Client Rendering Display generator. Stateless.
+-- CRendDisplayMod is a stateless module used to construct
+-- CRendDisplay objects for particular displays.
+
+mod/ws/interfaces/CRendPixmap.if
+  CRendPixmap
+--      Generates CRend's that render into a chunk of memory
+-- CRendPixmap constructs limited CRend objects that render on to
+-- pixel maps.
+
+
+
+
