@@ -485,7 +485,7 @@ static const LongCardTblMod_cl safetblmod_cl   = {&safetblmod_ms, NULL};
 CL_EXPORT(LongCardTblMod, LongCardTblMod, tblmod_cl);
 CL_EXPORT_TO_PRIMAL(LongCardTblMod, LongCardTblModCl, tblmod_cl);
 
-CL_EXPORT(LongCardTblMod, SafeLongCardTblMod, safetblmod_cl)
+CL_EXPORT(LongCardTblMod, SafeLongCardTblMod, safetblmod_cl);
 CL_EXPORT_TO_PRIMAL(LongCardTblMod, SafeLongCardTblModCl, safetblmod_cl);
 
 static LongCardTbl_op LongCardTbl_ms = {
